@@ -2,11 +2,7 @@
 
 ### Introduction and Background:
 
-Our Star Wars and Other Movies Hub aims to provide a comprehensive movie and tv-show database. Our website caters to movie enthusiasts seeking detaile information and reviews about their favorite movies. The website will 
-
-The internet offers various movie databases, but many lack a strong sense of community. CineHub aims to bridge this gap by providing a comprehensive database alongside user-driven content and discussion forums. Star Wars and other Movies Hub caters to movie enthusiasts seeking detailed information, insightful reviews, and engaging discussions about their favorite films.
-
-We will create an IMDb and MyAnimeList hybrid.
+Our Star Wars and Other Movies Hub aims to provide a comprehensive movie and tv-show database. Our website caters to movie enthusiasts seeking detaile information and reviews about their favorite movies. The website will allow a user to create a profile, create a list of movies to watch, rate and review movies. 
 
 ### Project Objective:
 
