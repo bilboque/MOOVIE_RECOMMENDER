@@ -1,8 +1,8 @@
-## Project Title: Star Wars and Other Movies Hub
+## Project Title: bDMI
 
 ### Introduction and Background:
 
-Our Star Wars and Other Movies Hub aims to provide a comprehensive movie and tv-show database. Our website caters to movie enthusiasts seeking detaile information and reviews about their favorite movies. The website will allow a user to create a profile, create a list of movies to watch, rate and review movies. 
+Our bDMI aims to provide a comprehensive movie and tv-show database. Our website caters to movie enthusiasts seeking detaile information and reviews about their favorite movies. The website will allow a user to create a profile, create a list of movies to watch, rate and review movies. 
 
 ### Project Objective:
 
@@ -20,21 +20,16 @@ Our primary objective is to create a user-friendly platform that serves as:
 * **Content management:** Allow users to submit and edit reviews.
 * **Search and filtering:** Enable users to search for movies and TV shows based on diverse criteria like title, genre, release date, actors, directors, and user ratings.
 * **Ratings and reviews:** Users can rate movies and TV shows on a defined scale and write detailed reviews.
-* **Recommendations:** Employ an algorithm to recommend movies and TV shows to users based on their past ratings, reviews, and viewed content.
+* **Recommendations:** Employ an algorithm to recommend movies and TV shows to users based on their past ratings, and viewed content.
 
 #### Non-Functional Requirements:
 
 * **Performance:** Ensure the platform delivers a responsive and seamless user experience even with high user traffic and data volume.
 * **Scalability:** Design the system to accommodate future growth in user base and data without compromising performance.
-* **Security:** Implement robust security measures to protect user data, prevent unauthorized access, and maintain system integrity.
 
 ### General Description/Functional Architecture:
 
-Star Wars and other Movies Hub will have a three-tier architecture:
-
-* **Presentation layer:** The user interface (web or mobile app) allows users to interact with the system, search for content, submit reviews, and participate in discussions.
-* **Business logic layer:** This layer handles user interactions, processes requests, interacts with the database, and performs necessary computations, like generating recommendations.
-* **Data layer:** The database stores all system information, including movie/TV show data, user data, ratings, reviews, and forum discussions.
+A DB interracting with our flask app.
 
 ### Users
 
