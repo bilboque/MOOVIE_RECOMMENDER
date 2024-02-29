@@ -9,8 +9,7 @@ Our Star Wars and Other Movies Hub aims to provide a comprehensive movie and tv-
 Our primary objective is to create a user-friendly platform that serves as:
 
 * A comprehensive database of movies and TV shows, including details like cast, crew, plot summaries, and ratings.
-* A platform for users to discover new content, share reviews, and engage in discussions about movies and TV shows.
-* A community hub for movie enthusiasts to connect and interact based on shared interests.
+* A platform for users to discover new content, write reviews about movies and TV shows, create a personal list of movies to watch and create a personal profile.
 
 ### Description of Requirements:
 
@@ -18,7 +17,7 @@ Our primary objective is to create a user-friendly platform that serves as:
 
 * **Data management:** Store, search, and retrieve information like titles, genres, release dates, cast, crew, plot summaries, and ratings for movies and TV shows.
 * **User management:** User registration, login, profile creation, and management.
-* **Content management:** Allow users to submit, edit, and potentially moderate reviews, with varying permission levels based on user roles.
+* **Content management:** Allow users to submit and edit reviews.
 * **Search and filtering:** Enable users to search for movies and TV shows based on diverse criteria like title, genre, release date, actors, directors, and user ratings.
 * **Ratings and reviews:** Users can rate movies and TV shows on a defined scale and write detailed reviews.
 * **Recommendations:** Employ an algorithm to recommend movies and TV shows to users based on their past ratings, reviews, and viewed content.
