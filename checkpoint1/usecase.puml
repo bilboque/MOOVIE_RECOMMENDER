@@ -1,0 +1,43 @@
+@startuml
+
+actor user as usr
+actor admin
+
+rectangle IMDb {
+    usecase "manipulate watchlist"              as wlist
+    usecase "create watchlist"                  as n_watchlist
+    usecase "add movie to watchlist"            as add_watchlist
+    usecase "remove movie from watchlist"       as rm_watchlist
+    usecase "create user profile"               as n_up
+
+    usecase "search for a movie"                as s_movie
+    usecase "search for movie with actor"       as s_actor    
+    usecase "search for movie with categorie"   as s_categ
+    usecase "search for movie by date"          as s_date
+
+    usecase "view movie details"                as v_movie
+    usecase "add review to movie"               as add_review
+
+    usecase "get movie recomandation"           as recomm
+
+    usecase "add movie to database"             as add_db
+    usecase "remove movie from database"        as rm_db
+}
+
+usr --> (wlist)
+(n_watchlist)  -u-> (wlist) #line.dashed : <extends>
+(add_watchlist)-u-> (wlist) #line.dashed : <extends>
+(rm_watchlist) -u-> (wlist) #line.dashed : <extends>
+usr --> (n_up)
+usr --> (s_movie)
+(s_actor) -u-> (s_movie) #line.dashed : <extends>
+(s_categ) -u-> (s_movie) #line.dashed : <extends>
+(s_date) -u-> (s_movie)  #line.dashed : <extends>
+usr --> (v_movie)
+usr --> (add_review)
+usr --> (recomm)
+admin --> (add_db)
+admin --> (rm_db)
+
+@enduml
+
