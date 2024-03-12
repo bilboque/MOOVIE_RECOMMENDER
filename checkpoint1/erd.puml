@@ -34,15 +34,6 @@ entity "review" as e6 {
 	Body : text
 }
 
-universe "0..1" -- "2..*" title
-title "0..*" -- "1..*" people
-title "0..*" -- "1" review
-review "0..*" -- "1" user
-user "1" -- "1" watchlist
-watchlist "0..*" -- "0..*" title
-
-(title, people) .. Role
-
 entity "Role" as e7 {
     Jobs : String[]
     Character : String
