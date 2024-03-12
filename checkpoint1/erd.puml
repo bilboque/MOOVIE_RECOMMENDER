@@ -1,5 +1,7 @@
 @startuml
 
+skinparam linetype ortho
+
 entity "universe" as e1 {
 	Name : String    
     	Description : String
