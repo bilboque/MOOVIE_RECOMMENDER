@@ -1,0 +1,59 @@
+@startuml
+
+entity "universe" as e1 {
+	Name : String    
+    	Description : String
+}
+
+entity "title" as e2 {
+	Date : String
+	Title : String
+	Length : Int
+	Awards : String[]
+	Categories : String[]
+}
+
+entity "people" as e3 {
+	Name: String
+	Birth_year : String
+	Death_year : String
+}
+
+entity "watchlist" as e4 {
+	Title: String
+}
+
+entity "user" as e5 {
+	Pseudo : String
+	Inscription_date : String
+}
+
+entity "review" as e6 {
+	Rating : Int
+	Date_of_creation : String
+	Body : text
+}
+
+universe "0..1" -- "2..*" title
+title "0..*" -- "1..*" people
+title "0..*" -- "1" review
+review "0..*" -- "1" user
+user "1" -- "1" watchlist
+watchlist "0..*" -- "0..*" title
+
+(title, people) .. Role
+
+entity "Role" as e7 {
+    Jobs : String[]
+    Character : String
+}
+
+e1 |o--|{ e2 
+e2 |o--|{ e3 
+e2 }o--|| e6 
+e6 }o--|| e5 
+e5 ||--|| e4
+e4 }o--o{ e2
+
+@enduml
+
