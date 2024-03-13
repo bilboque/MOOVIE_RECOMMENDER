@@ -1,28 +1,28 @@
 @startuml
 skinparam linetype ortho
 class universe{
-	String      name
-    	String      description
+	Name      name
+    	Text      description
 }
 
 class title{
     	Date        date
-    	String      Title
+    	Text      Title
     	Time        lenght
 }
 
 class award{
-	String award_name	
-	String Title
+	Text award_name	
+	Text Title
 }
 
 class category{
-	String category
-	String Title
+	Text category
+	Text Title
 }
 
 class people{
-    	String      name
+    	Name      name
     	Date        birth_year
     	Date        death_year
 }
@@ -31,22 +31,22 @@ class watchlist{
 }
 
 class user{
-    	String      pseudo
+    	Name      pseudo
     	Date        inscription_date
 }
 
 class review{
     	Int         rating
     	Date        creation
-    	String      body
+    	Text      body
 }
 
 class role{
-    	String      character
+    	Name      character
 }
 
 class job{
-	String job
+	Text job
 }
 
 universe "0..1" -- "2..*" title
