@@ -1,0 +1,64 @@
+@startuml
+skinparam linetype ortho
+class universe{
+	String      name
+    	String      description
+}
+
+class title{
+    	Date        date
+    	String      Title
+    	Time        lenght
+}
+
+class award{
+	String award_name	
+	String Title
+}
+
+class category{
+	String category
+	String Title
+}
+
+class people{
+    	String      name
+    	Date        birth_year
+    	Date        death_year
+}
+
+class watchlist{
+}
+
+class user{
+    	String      pseudo
+    	Date        inscription_date
+}
+
+class review{
+    	Int         rating
+    	Date        creation
+    	String      body
+}
+
+class role{
+    	String      character
+}
+
+class job{
+	String job
+}
+
+universe "0..1" -- "2..*" title
+title "0..*" -- "1..*" people
+title "0..*" -- "1" review
+title "1" -- "0..*" award
+title "1" -- "1..*" category
+review "0..*" -- "1" user
+user "1" -- "1" watchlist
+watchlist "0..*" -- "0..*" title
+role "1" -- "0..*" job : includes
+
+(title, people) .. role
+
+@enduml
