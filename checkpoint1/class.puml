@@ -1,19 +1,19 @@
 @startuml
 class universe{
-    String      name
-    String      description
+    Name      name
+    Text      description
 }
 
 class title{
     Date        date
-    String      Title
+    Text      Title
     Time        lenght
-    String[]    awards
-    Categorie[] categories
+    Text[]    awards
+    Category[] categories
 }
 
 class people{
-    String      name
+    Name      name
     Date        birth_year
     Date        death_year
 }
@@ -22,14 +22,14 @@ class watchlist{
 }
 
 class user{
-    String      pseudo
+    Name      pseudo
     Date        inscription_date
 }
 
 class review{
     Int         rating
     Date        creation
-    String      body
+    Text      body
 }
 
 universe "0..1" -- "2..*" title
@@ -42,8 +42,8 @@ watchlist "0..*" -- "0..*" title
 (title, people) .. Role
 
 class Role{
-    String[]    jobs
-    String      character
+    Jobs[]    job
+    Name      character
 }
 
 @enduml
