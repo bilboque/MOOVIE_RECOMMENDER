@@ -1,52 +1,53 @@
 @startuml
 skinparam linetype ortho
-class universe{
-	Name      name
-    	Text      description
+
+class universe {
+    Name: Name
+    Description: Text
 }
 
-class title{
-    	Date        date
-    	Text      Title
-    	Time        lenght
+class title {
+    Date: Date
+    Title: Text
+    Length: Time
 }
 
-class award{
-	Text award_name	
-	Text Title
+class award {
+    Award_name: Name
+    Title: Text
 }
 
-class category{
-	Text category
-	Text Title
+class category {
+    Category: Name
+    Title: Text
 }
 
-class people{
-    	Name      name
-    	Date        birth_year
-    	Date        death_year
+class people {
+    Name: Name
+    Birth_year: Date
+    Death_year: Date
 }
 
-class watchlist{
+class watchlist {
 }
 
-class user{
-    	Name      pseudo
-    	Date        inscription_date
+class user {
+    Pseudo: Name
+    Inscription_date: Date
 }
 
-class review{
-    	Int         rating
-    	Date        creation
-    	Text      body
+class review {
+    Rating: Int
+    Creation: Date
+    Body: Text
 }
 
-class role{
-    	Name      character
+class role {
+    Character: Name
 }
 
-class job{
-	Text job
+class job {
+    Job: Name
 }
 
 universe "0..1" -- "2..*" title
@@ -60,5 +61,4 @@ watchlist "0..*" -- "0..*" title
 role "1" -- "0..*" job : includes
 
 (title, people) .. role
-
 @enduml
