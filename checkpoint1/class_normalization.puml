@@ -52,7 +52,7 @@ class job {
 
 universe "0..1" -- "2..*" title
 title "0..*" -- "1..*" people
-title "0..*" -- "1" review
+title "1" -- "0..*" review
 title "1" -- "0..*" award
 title "1" -- "1..*" category
 review "0..*" -- "1" user
