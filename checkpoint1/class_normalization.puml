@@ -7,6 +7,7 @@ class universe {
 }
 
 class title {
+    <U>Title_id: Int
     Date: Date
     Title: Text
     Length: Time
@@ -14,16 +15,16 @@ class title {
 
 class award {
     Award_name: Name
-    Title: Text
+    Title_id: Int
 }
 
 class category {
     Category: Name
-    Title: Text
+    Title_id: Int
 }
 
 class people {
-    Name: Name
+    <U>Name: Name
     Birth_year: Date
     Death_year: Date
 }
