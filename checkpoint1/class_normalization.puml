@@ -57,9 +57,6 @@ class job {
 	Job: Name
 }
 
-class title_watchlist{
-}
-
 class title_category{
 }
 
@@ -69,11 +66,10 @@ title "1" -- "0..*" review
 title "0..1" -- "0..*" award
 title "1..*" -- "1..*" category
 review "0..*" -- "1" user
-user "1" -- "1" watchlist
-watchlist "0..*" -- "0..*" title
+user "0..*" -- "0..*" title
 role "1" -- "0..*" job
 
 (title, people) .. role
-(title, watchlist) .. title_watchlist
+(title, user) .. watchlist
 (title, category) .. title_category
 @enduml
