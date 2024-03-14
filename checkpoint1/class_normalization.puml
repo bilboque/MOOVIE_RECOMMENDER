@@ -49,7 +49,7 @@ class review {
 
 class role {
     <U>Role_id: Int
-	Character: Name
+    character: Name
 }
 
 class job {
