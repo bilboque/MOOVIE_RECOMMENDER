@@ -2,7 +2,8 @@
 skinparam linetype ortho
 
 class universe {
-    Name: Name
+    <U>Universe_id: Int
+	Name: Name
     Description: Text
 }
 
@@ -14,17 +15,18 @@ class title {
 }
 
 class award {
+    <U>Award_id: Int
     Award_name: Name
-    Title_id: Int
 }
 
 class category {
-    Category: Name
-    Title_id: Int
+		<U>Category_id: Int
+    	Category: Name
 }
 
 class people {
-    <U>Name: Name
+    <U>People_id: Int
+	Name: Name
     Birth_year: Date
     Death_year: Date
 }
@@ -33,33 +35,45 @@ class watchlist {
 }
 
 class user {
-    Pseudo: Name
+    <U>User_id: Int
+	Pseudo: Name
     Inscription_date: Date
 }
 
 class review {
+    <U>Review_id: Int
     Rating: Int
     Creation: Date
     Body: Text
 }
 
 class role {
-    Character: Name
+    <U>Role_id: Int
+	Character: Name
 }
 
 class job {
-    Job: Name
+    <U>Job_id: Int
+	Job: Name
+}
+
+class title_watchlist{
+}
+
+class title_category{
 }
 
 universe "0..1" -- "2..*" title
 title "0..*" -- "1..*" people
 title "1" -- "0..*" review
-title "1" -- "0..*" award
-title "1" -- "1..*" category
+title "0..1" -- "0..*" award
+title "1..*" -- "1..*" category
 review "0..*" -- "1" user
 user "1" -- "1" watchlist
 watchlist "0..*" -- "0..*" title
-role "1" -- "0..*" job : includes
+role "1" -- "0..*" job
 
 (title, people) .. role
+(title, watchlist) .. title_watchlist
+(title, category) .. title_category
 @enduml
