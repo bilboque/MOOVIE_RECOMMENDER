@@ -39,6 +39,24 @@ Furthermore, we have identified the following relationships between those entiti
 
 # Objectifs analysis
 
+We identified the following objecives:
+
+* Offer an online catalogue of movies and tv series
+    * Build a database of movies and tv series
+    * Offer a good user experience
+        * Create an engaging website
+            * Implement a recommendation system
+            * Implement a user registration feature
+            * Implement a watchlist feature
+            * Implement a search and discovery feature
+
+Based on those objectives, we identified the following functional and non-functional needs:
+
+The first functional need is "Allow users to interact with a catalogue of movies and tv series", supported by EF 2: "Allow users to register with the website", EF 5: "Allow users to interact with the service" and EF 4: "Allow usres to discover movies and tv series". 
+
+EF5 is made up of the following: "Allow usres to create a watchlist", ENF "Users can manipulate their watchlist through adding, removing and viewing the content of their watchlist" and "Allow users to add a review and a rating for a movie". 
+
+EF 4 is made up of the following: EF: "The service should provide movie recommendations", ENF: "The service should provide movie recommendations based on user preferences and past activity".
 
 
 # Use cases (UML)
