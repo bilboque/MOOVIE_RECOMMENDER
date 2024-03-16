@@ -1,19 +1,31 @@
 # Functional needs
 
-* Users can manipulate their watchlists
-* Users can create watchlists
-* Users can add movies to their watchlist
-* Users can remove movies from their watchlist
-* Users can create a user profile
-* Users can search for a movie
-* Users can search for a movie with actor
-* Users can search for a movie with category
-* Users can search for a movie with date 
-* Users can view movie details
-* Users can add a review for a movie
-* Users can get movie recommendations
-* Administrators can add a movie to the database
-* Administrators can remove a movie from the database
+* Manipulate watchlists:
+    * ability to add movies to watchlist
+    * ability to remove movies from watchlist
+    * ability to view the contents of the watchlist
+
+* Create watchlists:
+    * a user must be able to create a new watchlist
+
+* User profile:
+    * a user must be able to create a new user profile
+
+* Search for a movie:
+    * a user must be able to search for a movie
+    * a user must be able to search for a movie using filters like actor, category or date
+
+* View movie details:
+    * a user must be able to view a movie's details
+
+* Adding a review:
+    * a user must be able to add a review for a movie
+
+* Movie recommendations:
+    * a user must get movie recommendations based on user preferences or past activity
+
+* Manipulating the database:
+    * an administrator must be able to add or remove movie entries from the database
 
 # Non-Functional needs
 
