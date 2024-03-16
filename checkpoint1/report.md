@@ -37,6 +37,10 @@ Furthermore, we have identified the following relationships between those entiti
 
 <insert logical diagram png>
 
+# Objectifs analysis
+
+
+
 # Use cases (UML)
 
 <insert usecase png>
