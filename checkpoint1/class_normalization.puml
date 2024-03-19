@@ -49,12 +49,8 @@ class review {
 
 class role {
     <U>Role_id: Int
-    character: Name
-}
-
-class job {
-    <U>Job_id: Int
 	Job: Name
+    character: Name
 }
 
 class title_category{
@@ -67,7 +63,6 @@ title "0..1" -- "0..*" award
 title "1..*" -- "1..*" category
 review "0..*" -- "1" user
 user "0..*" -- "0..*" title
-role "1" -- "0..*" job
 
 (title, people) .. role
 (title, user) .. watchlist
