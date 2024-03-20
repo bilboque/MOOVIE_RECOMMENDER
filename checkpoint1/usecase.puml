@@ -16,7 +16,7 @@ rectangle IMDb {
     usecase "search for movie by date"          as s_date
 
     usecase "view movie details"                as v_movie
-    usecase "add review to movie"               as add_review
+    usecase "add and browse movie reviews"      as add_review
 
     usecase "get movie recomandation"           as recomm
 
