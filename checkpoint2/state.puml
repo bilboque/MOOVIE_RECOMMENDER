@@ -1,0 +1,9 @@
+@startuml
+
+[*] --> State_idle : User browsing
+State_idle --> [*] : User left
+State_idle --> fork_state : User rates or reviews movie
+fork_state --> State_idle 
+fork_state --> Analyse_user_behaviour
+
+@enduml
