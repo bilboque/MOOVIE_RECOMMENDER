@@ -17,7 +17,7 @@ connection = mysql.connector.connect(
     host="localhost",
     port=3306,
     user="root",
-    password="podmanroot13",
+    password="",
     database="DBMi"  # db name to access
 )
 
@@ -25,8 +25,12 @@ connection = mysql.connector.connect(
 cursor = connection.cursor()
 
 
-@app.route("/")
+@app.route("/")  # this will become the main page with movies displayed
 def hello_world():
+    # mysql_query = """ SELECT title FROM entries """
+    # cursor.execute(mysql_query)
+    # output = cursor.fetchall()
+    # return jsonify(output)
     return "<p>Hello, World!</p>"
 
 
@@ -36,7 +40,7 @@ def about():
 
 
 # route for displaying test data
-@app.route("/movies/")
+@app.route("/movies/", methods=['GET'])
 def movies():
     mysql_query = """ SHOW TABLES;"""
     # conn = mysql.connection
@@ -44,7 +48,7 @@ def movies():
     cursor.execute(mysql_query)
     output = cursor.fetchall()
 
-    return jsonify(output)
+    return str(output)
     # return str(output)
 
 
