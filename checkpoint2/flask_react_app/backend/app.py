@@ -1,26 +1,28 @@
-from flask import Flask
-from flask_mysql_connector import MySQL
-
+from flask import Flask, jsonify
+# from flask_mysql_connector import MySQL
+# from mysql_connector_python import connector
+# from mysql import connector
+import mysql.connector  # this works
 
 app = Flask(__name__)
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_DATABASE'] = 'DBMi'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_PORT'] = 3306
-mysql = MySQL(app)
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_DATABASE'] = 'DBMi'
+# app.config['MYSQL_PASSWORD'] = ''
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_PORT'] = 3306
+# mysql = MySQL(app)
 
 # create db connection
-# connection = connector.connect(
-# host="localhost",
-# port=3306,
-# user="root",
-# password="podmanroot13",
-# database="DBMi"  # db name to access
-# )
+connection = mysql.connector.connect(
+    host="localhost",
+    port=3306,
+    user="root",
+    password="podmanroot13",
+    database="DBMi"  # db name to access
+)
 
 
-# cursor = connection.cursor()
+cursor = connection.cursor()
 
 
 @app.route("/")
@@ -37,12 +39,13 @@ def about():
 @app.route("/movies/")
 def movies():
     mysql_query = """ SHOW TABLES;"""
-    conn = mysql.connection
-    cur = conn.cursor()
-    cur.execute(mysql_query)
-    output = cur.fetchall()
+    # conn = mysql.connection
+    # cur = conn.cursor()
+    cursor.execute(mysql_query)
+    output = cursor.fetchall()
 
-    return str(output)
+    return jsonify(output)
+    # return str(output)
 
 
 if __name__ == '__main__':
