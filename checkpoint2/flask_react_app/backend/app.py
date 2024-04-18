@@ -1,23 +1,25 @@
-from flask import Flask, jsonify
-# from flask_mysql_connector import MySQL
-# from mysql_connector_python import connector
-# from mysql import connector
+from flask import Flask, jsonify, render_template
+
 import mysql.connector  # this works
 
 app = Flask(__name__)
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_DATABASE'] = 'DBMi'
-# app.config['MYSQL_PASSWORD'] = ''
-# app.config['MYSQL_HOST'] = 'localhost'
-# app.config['MYSQL_PORT'] = 3306
-# mysql = MySQL(app)
+
+
+def read_db_password():
+    try:
+        with open('password.txt', 'r') as file:
+            password = file.readline().strip()  # Assuming password is stored in a single line
+        return password
+    except FileNotFoundError:
+        return None
+
 
 # create db connection
 connection = mysql.connector.connect(
     host="localhost",
     port=3306,
     user="root",
-    password="podmanroot13",
+    password=read_db_password(),
     database="DBMi"  # db name to access
 )
 
@@ -31,7 +33,7 @@ def hello_world():
     # cursor.execute(mysql_query)
     # output = cursor.fetchall()
     # return jsonify(output)
-    return "<p>Hello, World!</p>"
+    return render_template('app.html')
 
 
 @app.route("/about/")
