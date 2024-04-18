@@ -50,7 +50,7 @@ def movies():
     cursor.execute(mysql_query)
     output = cursor.fetchall()
 
-    return str(output)
+    return jsonify(output)
     # return str(output)
 
 
