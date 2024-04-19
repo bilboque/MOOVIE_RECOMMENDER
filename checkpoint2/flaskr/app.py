@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, render_template, request, session
-from flask_login import login_required
-import hashlib
+from werkzeug.security import check_password_hash, generate_password_hash
 import mysql.connector  # this works
+from flask_login import login_required
+from flask import (Flask, jsonify, render_template, request, session, redirect,
+                   url_for, flash)
 
 app = Flask(__name__)
 
@@ -45,67 +46,74 @@ def index():
     return render_template('app.html')
 
 
-def authenticate_user(username, password):
-    cursor.execute(
-        "SELECT password FROM users WHERE username = %s", (username))
-    result = cursor.fetchone()
+@app.route("/register", methods=["GET", "POST"])  # route for creating account
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        error = None
 
-    if result:
-        # Assuming password is stored in the first column
-        hashed_password = result[0]
-        if verify_password(password, hashed_password):
-            return True  # Authentication successful
-    return False  # Authentication failed
+        if not username:
+            error = 'Username is required'
+        elif not password:
+            error = 'Password is required'
 
+        if error is None:
+            # Store the username and hashed password in the database
+            try:
+                cursor.execute(
+                    "INSERT INTO users (username, password) VALUES (%s, %s)", (
+                        username, generate_password_hash(password))
+                )
+                connection.commit()
+            except connection.IntegrityError:
+                error = f"User {username} is already registered."
+            else:
+                return redirect(url_for("auth.login"))
 
-@app.route("/create", methods=["POST"])  # route for creating account
-def createAccount():
-    username = request.json.get('username')
-    password = request.json.get('password')
+            flash(error)
 
-    # Hash the password
-    hashed_password = hash_password(password)
-
-    # Store the username and hashed password in the database
-    try:
-        cursor.execute(
-            "INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_password))
-        connection.commit()
-        if cursor.rowcount == 1:
-            return jsonify({"message": "Account created successfully"}), 201
-        else:
-            return jsonify({"error": "Failed to create account"}), 500
-    except mysql.connector.Error as err:
-        return jsonify({"error": f"Failed to create account: {err}"}), 500
+        return render_template('auth/register.html')
 
 
 @app.route("/login", methods=["POST"])
 def login():
-    username = request.json.get('username')
-    password = request.json.get('password')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        error = None
+        user = cursor.execute(
+            'SELECT * FROM user WHERE username = ?', (username,)
+        ).fetchone()
 
-    if authenticate_user(username, password):  # perform authentication check
-        session['username'] = username
-        return jsonify({"message": "Login successful"}), 200
-    else:
-        return jsonify({"error": "Invalid username or password"}), 401
+        if user is None:
+            error = 'Incorrect username.'
+        elif not check_password_hash(user['password'], password):
+            error = 'Incorrect password.'
+
+        if error is None:
+            session.clear()
+            session['user_id'] = user['id']
+            return redirect(url_for('index'))
+
+        flash(error)
+
+    return render_template('auth/login.html')
 
 
-def hash_password(password):  # function to hash password
-    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 
 
-def verify_password(password, hashed_password):  # Function to verify a password
-    return hashed_password == hash_password(password)
-
-
-@app.route("/about/")
+@ app.route("/about/")
 def about():
     return "<h3>This is an IMDb project; codename DBMi</h3>"
 
 
 # route for displaying test data
-@app.route("/movies/", methods=['GET'])
+@ app.route("/movies/", methods=['GET'])
 def movies():
     mysql_query = """ SHOW TABLES;"""
     cursor.execute(mysql_query)
@@ -115,7 +123,7 @@ def movies():
     # return str(output)
 
 
-@app.route("/api/movies/", methods=['GET'])
+@ app.route("/api/movies/", methods=['GET'])
 def getMovies():
     mysql_query = """SHOW TABLES;"""
     cursor.execute(mysql_query)
@@ -124,7 +132,8 @@ def getMovies():
     return jsonify(output)
 
 
-@app.route("/api/movies/<int:movie_id>", methods=['GET'])  # view movie details
+# view movie details
+@ app.route("/api/movies/<int:movie_id>", methods=['GET'])
 def getMovieDetails(movie_id):
     cursor.execute("SELECT * FROM movies WHERE id = %s", (movie_id,))
     movie = cursor.fetchone()
@@ -134,7 +143,7 @@ def getMovieDetails(movie_id):
         return jsonify({"error": "Movie not found"}), 404
 
 
-@app.route('/api/search', methods=['GET'])  # search for a movie
+@ app.route('/api/search', methods=['GET'])  # search for a movie
 def search_movie():
     query = request.args.get('query')
     cursor.execute("SELECT * FROM movies WHERE title LIKE %s",
@@ -147,8 +156,8 @@ def search_movie():
 
 
 # Watchlist route
-@app.route('/watchlist', methods=['GET'])
-@login_required  # decorator to ensure that only authenticated users can access the route
+@ app.route('/watchlist', methods=['GET'])
+@ login_required  # decorator to ensure that only authenticated users can access the route
 def view_watchlist():
     # Check if user is logged in
     if 'user_id' not in session:
