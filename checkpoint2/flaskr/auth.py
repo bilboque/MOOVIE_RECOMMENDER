@@ -61,3 +61,10 @@ def login():
         flash(error)
 
     return render_template('auth/login.html')
+
+
+@auth_bp.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))

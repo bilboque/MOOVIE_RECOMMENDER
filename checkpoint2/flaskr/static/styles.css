@@ -26,13 +26,11 @@ nav a {
 }
 
 .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     margin: 20px auto;
     max-width: 800px;
     padding: 0 20px;
-}
-
-h2 {
-    color: #333;
 }
 
 .movie {
@@ -56,3 +54,13 @@ h2 {
     margin: 5px 0;
 }
 
+.search-container{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.container.full-width {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}

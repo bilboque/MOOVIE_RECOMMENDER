@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <h1>MyMovieDB</h1>
+        <h1>DBMi</h1>
     </header>
     <nav>
         <a href="/">Home</a>
@@ -18,13 +18,13 @@
         <a href="/register">Create account</a>
         <!-- Add more links as needed -->
     </nav>
-    <div class="container">
-        <h2>Welcome to MyMovieDB</h2>
-        <!-- Add search form -->
+    <div class="search-container">
         <form action="/api/search" method="GET">
             <input type="text" name="query" placeholder="Search for a movie...">
             <input type="submit" value="Search">
         </form>
+    </div>
+    <div class="container full-width">
         {% for movie in output %}
         <div class="movie">
             <h3>{{ movie.title }}</h3>
