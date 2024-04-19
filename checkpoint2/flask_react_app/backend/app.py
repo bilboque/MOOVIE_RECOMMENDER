@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template, request, session
+from flask_login import login_required
 import hashlib
 import mysql.connector  # this works
 
@@ -147,6 +148,7 @@ def search_movie():
 
 # Watchlist route
 @app.route('/watchlist', methods=['GET'])
+@login_required  # decorator to ensure that only authenticated users can access the route
 def view_watchlist():
     # Check if user is logged in
     if 'user_id' not in session:
