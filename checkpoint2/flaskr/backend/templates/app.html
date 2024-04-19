@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMovieDB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>MyMovieDB</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/movies">Movies</a>
+        <a href="/tv_shows">TV Shows</a>
+        <a href="/login">Login</a>
+        <a href="/create">Create account</a>
+        <!-- Add more links as needed -->
+    </nav>
+    <div class="container">
+        <h2>Welcome to MyMovieDB</h2>
+        <div class="movie">
+            <img src="https://via.placeholder.com/100" alt="Movie Poster">
+            <h3>Movie Title</h3>
+            <p>Release Year: 2022</p>
+            <p>Genre: Action, Adventure</p>
+            <p>Director: John Doe</p>
+            <p>IMDb Rating: 8.0</p>
+        </div>
+        <!-- Repeat the movie div for more movies -->
+    </div>
+</body>
+</html>
+
