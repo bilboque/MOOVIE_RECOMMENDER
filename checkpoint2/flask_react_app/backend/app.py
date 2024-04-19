@@ -84,6 +84,7 @@ def login():
     password = request.json.get('password')
 
     if authenticate_user(username, password):  # perform authentication check
+        session['username'] = username
         return jsonify({"message": "Login successful"}), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 401
