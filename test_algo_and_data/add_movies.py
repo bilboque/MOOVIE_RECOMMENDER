@@ -35,6 +35,29 @@ def add_movie(cursor, movie: dict):
             print("Erreur lors de l'insertion du film:", e)
 
 
+# Ajoute un genre a la db
+def add_genre(cursor, genre: dict):
+    # Vérifier si le genre existe déjà
+    cursor.execute("SELECT category_id FROM category WHERE category_id = %s", (genre['id'],))
+    if cursor.fetchone():
+        print(f"Le genre avec l'ID {genre['id']} existe déjà.")
+        return
+
+    try:
+        # Requête SQL pour insérer un genre
+        insert_query = """
+        INSERT INTO category (category_id, category_name)
+        VALUES (%s, %s)
+        """
+        # Exécution de la requête SQL avec les données du genre
+        cursor.execute(insert_query, (genre['id'], genre['name']))
+
+        print(f"Ajout du genre '{genre['name']}' avec l'ID {genre['id']}")
+    except mysql.connector.Error as e:
+        print(f"Erreur lors de l'ajout du genre '{genre['name']}':", e)
+
+
+
 # connection to DB
 connection = mysql.connector.connect(
     host="localhost",
@@ -54,16 +77,24 @@ tmdb.REQUESTS_TIMEOUT = 5
 # Base class
 movies = tmdb.Movies()
 
-# Wrapper requests les 10 000 films les plus populaires
-# on peut aller jusqu'a 20 000 films normalement
-# si range(1, n) insere 20*n films sans les films adultes
-for i in range(1, 500):
-    resp = movies.top_rated(page=i)
-    if 'results' in resp:
-        for film in resp['results']:
-            add_movie(cursor, film)
-    else:
-        print(f"La page {i} n'a pas pu être chargée ou est vide.")
+# # Wrapper requests les 10 000 films les plus populaires
+# # on peut aller jusqu'a 20 000 films normalement
+# # si range(1, n) insere 20*n films sans les films adultes
+# for i in range(1, 500):
+#     resp = movies.top_rated(page=i)
+#     if 'results' in resp:
+#         for film in resp['results']:
+#             add_movie(cursor, film)
+#     else:
+#         print(f"La page {i} n'a pas pu être chargée ou est vide.")
+
+
+# Wrapper request pour obtenir les genres
+genres = tmdb.Genres()
+resp = genres.movie_list()
+
+for genre in resp['genres']:
+    add_genre(cursor, genre)
 
 
 # commit les changements
