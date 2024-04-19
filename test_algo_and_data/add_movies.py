@@ -57,6 +57,64 @@ def add_genre(cursor, genre: dict):
         print(f"Erreur lors de l'ajout du genre '{genre['name']}':", e)
 
 
+# Update movies infos
+# cette fonction update les infos suivantes
+# -> longeur, univers fk
+# cette fonction ajoute des elements dans la table entrie categorie
+# cette fonction ajoute aussi les univers des films
+def update_all_movies_infos():
+    # Récupérer tous les IDs des films de la base de données
+    cursor.execute("SELECT entries_id FROM entries")
+    movie_ids = cursor.fetchall()
+    universe_fk = None
+
+    for (movie_id,) in movie_ids:
+        # Récupérer les détails du film depuis TMDB
+        try:
+            movies = tmdb.Movies(movie_id)
+            resp = movies.info()
+        except Exception as e:
+            print(f"Erreur lors de la récupération des détails pour le film ID {movie_id}: {e}")
+            continue
+
+        # Ajouter les genres dans la table entries_category
+        for genre in resp.get('genres', []):
+            insert_genre_query = """
+            INSERT INTO entries_category (entries_id_fk, category_id_fk)
+            VALUES (%s, %s)
+            """
+            cursor.execute(insert_genre_query, (movie_id, genre['id']))
+            print(f"Ajout de la relation '{genre['name']}' avec le film id {movie_id}")
+
+        # Creation de l'univers si besoin
+        collection = resp['belongs_to_collection']
+        if collection:
+            # Vérifier si la collection existe déjà dans la table universe
+            cursor.execute("SELECT universe_id FROM universe WHERE universe_id = %s", (collection['id'],))
+            if not cursor.fetchone():
+                # Si elle n'existe pas, insérez-la
+                insert_universe_query = """
+                INSERT INTO universe (universe_id, name, description)
+                VALUES (%s, %s, NULL)
+                """
+                cursor.execute(insert_universe_query, (collection['id'], collection['name']))
+                universe_fk = collection['id']
+                print(f"Ajout de la collection '{collection['name']}' avec le film id {movie_id}")
+            else:
+                universe_fk = None
+
+        # Mise à jour des informations de longueur et univers fk dans la table entries
+        runtime = resp['runtime']  # runtime est en minutes apriori
+        update_query = """
+        UPDATE entries
+        SET length = %s, universe_id_fk = %s
+        WHERE entries_id = %s
+        """
+        cursor.execute(update_query, (f"{runtime//60:02}:{runtime%60:02}:00", universe_fk, movie_id))
+        print(f"Update movie (id = {movie_id})")
+
+    print("Update process completed.")
+
 
 # connection to DB
 connection = mysql.connector.connect(
@@ -96,6 +154,7 @@ resp = genres.movie_list()
 for genre in resp['genres']:
     add_genre(cursor, genre)
 
+update_all_movies_infos()
 
 # commit les changements
 connection.commit()
