@@ -14,12 +14,15 @@
         <a href="/">Home</a>
         <a href="/movies">Movies</a>
         <a href="/tv_shows">TV Shows</a>
-        <a href="/login">Login</a>
-        <a href="/register">Create account</a>
-        <!-- Add more links as needed -->
+        {% if 'user_id' in session %}
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Create account</a>
+        {% endif %}
     </nav>
     <div class="search-container">
-        <form action="/api/search" method="GET">
+        <form action="/search" method="GET">
             <input type="text" name="query" placeholder="Search for a movie...">
             <input type="submit" value="Search">
         </form>

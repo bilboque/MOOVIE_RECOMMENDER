@@ -2,11 +2,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask import (Blueprint, render_template, request, session, redirect,
                    url_for, flash)
 from db import get_db_connection
+import mysql.connector
 
 auth_bp = Blueprint('auth', __name__)
 
 connection = get_db_connection()
-cursor = connection.cursor
+cursor = connection.cursor()
 
 
 @auth_bp.route('/register', methods=('GET', 'POST'))
@@ -24,11 +25,11 @@ def register():
         if error is None:
             try:
                 cursor.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
+                    "INSERT INTO user (pseudo, mot_de_passe) VALUES (%s, %s)",
                     (username, generate_password_hash(password)),
                 )
                 connection.commit()
-            except connection.IntegrityError:
+            except mysql.connector.IntegrityError:
                 error = f"User {username} is already registered."
             else:
                 return redirect(url_for("auth.login"))
@@ -44,19 +45,22 @@ def login():
         username = request.form['username']
         password = request.form['password']
         error = None
+        print(username)
+        print("Select * from user where pseudo = %s", username)
+
         user = cursor.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
+            'SELECT * FROM user WHERE pseudo = %s', (username,)
         ).fetchone()
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
+        elif not check_password_hash(user['mot_de_passe'], password):
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('index'))
+            return redirect(url_for('routes.index'))
 
         flash(error)
 

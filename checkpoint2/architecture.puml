@@ -3,9 +3,11 @@
 [client]
 package "Flask application" as FA{
 	[Routes] as R
+	[API routes] as AR
 	[Authentication] as A
 	[Database] as D
 }
+
 database "MySQL database"{
 	
 }
