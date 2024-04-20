@@ -1,0 +1,26 @@
+@startuml
+
+[client]
+package "Flask application" as FA{
+	[Routes] as R
+	[Authentication] as A
+	[Database] as D
+}
+database "MySQL"{
+	
+}
+
+D ..|> R
+D ..|> A
+[client] ..> R : normal request
+R ..> MySQL : normal request
+MySQL ..> R : normal response
+R ..> [client] : normal response
+
+[client] ..> A : login/registration request
+A ..> MySQL : login/registration request
+MySQL ..> A : login/registration response
+A ..> [client] : login/registration response
+
+
+@enduml
