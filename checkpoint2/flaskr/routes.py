@@ -5,7 +5,7 @@ from api_routes import getIndex, getMovies, searchEntry, getMovieDetails
 routes_bp = Blueprint('routes', __name__)
 
 
-@routes_bp.route("/")  # this will become the main page with movies displayed
+@routes_bp.route("/")
 def index():
     output = getIndex()
     return render_template('app.html', output=output)

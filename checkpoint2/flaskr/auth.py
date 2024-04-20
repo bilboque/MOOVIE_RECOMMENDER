@@ -45,12 +45,11 @@ def login():
         username = request.form['username']
         password = request.form['password']
         error = None
-        print(username)
-        print("Select * from user where pseudo = %s", username)
 
         user = cursor.execute(
-            'SELECT * FROM user WHERE pseudo = %s', (username,)
+            "SELECT * FROM user WHERE pseudo = %s", (username,)
         ).fetchone()
+        print(user)
 
         if user is None:
             error = 'Incorrect username.'
