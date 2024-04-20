@@ -6,7 +6,7 @@ package "Flask application" as FA{
 	[Authentication] as A
 	[Database] as D
 }
-database "MySQL"{
+database "MySQL database"{
 	
 }
 
