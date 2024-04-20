@@ -116,6 +116,71 @@ def update_all_movies_infos():
     print("Update process completed.")
 
 
+# add actors and director for a movie
+def add_cast_and_director(cursor, movie_id: int,
+                          cast: list, crew: list,
+                          max_actors: int = 3):
+    # Add actors
+    for person in cast[:max_actors]:
+        if not person_exists(cursor, person['id']):
+            insert_person(cursor, person)
+
+        # Insert the actor's role into the role table
+        insert_role(cursor,
+                    person['id'],
+                    "Actor",
+                    person.get('character', None),
+                    movie_id)
+
+    # Find and add the director from the crew
+    director = next((member for member in crew if member.get('job') == 'Director'), None)
+    if director and not person_exists(cursor, director['id']):
+        insert_person(cursor, director)
+        # Insert the director's role into the role table
+        insert_role(cursor, director['id'], "Director", None, movie_id)
+
+
+def person_exists(cursor, person_id):
+    cursor.execute("SELECT people_id FROM people WHERE people_id = %s", (person_id,))
+    return cursor.fetchone() is not None
+
+
+def insert_person(cursor, person):
+    insert_query = """
+    INSERT INTO people (people_id, name, birth_date, death_date)
+    VALUES (%s, %s, %s, %s)
+    """
+    # Prepare data with null checks for optional fields
+    person_data = (
+        person['id'],
+        person.get('name'),
+        person.get('birth_date', None),
+        person.get('death_date', None)
+    )
+    cursor.execute(insert_query, person_data)
+    print(f"person {person['name']} added.")
+
+
+def insert_role(cursor, person_id, job, character, movie_id):
+    check_query = """
+    SELECT role_id FROM role
+    WHERE people_id_fk = %s AND entries_id_fk = %s AND job = %s AND `character` = %s
+    """
+    cursor.execute(check_query, (person_id, movie_id, job, character))
+    if cursor.fetchone():
+        print(f"Role {job} for character {character or 'N/A'} already exists for person ID {person_id} in movie ID {movie_id}.")
+        return
+
+    # Insert the new role if it does not exist
+    insert_query = """
+    INSERT INTO role (job, `character`, entries_id_fk, people_id_fk)
+    VALUES (%s, %s, %s, %s)
+    """
+    role_data = (job, character, movie_id, person_id)
+    cursor.execute(insert_query, role_data)
+    print(f"Role {job} for character {character or 'N/A'} added for movie ID {movie_id}.")
+
+
 # connection to DB
 connection = mysql.connector.connect(
     host="localhost",
@@ -147,14 +212,27 @@ movies = tmdb.Movies()
 #         print(f"La page {i} n'a pas pu être chargée ou est vide.")
 
 
-# Wrapper request pour obtenir les genres
-genres = tmdb.Genres()
-resp = genres.movie_list()
+# # Wrapper request pour obtenir les genres
+# genres = tmdb.Genres()
+# resp = genres.movie_list()
+#
+# for genre in resp['genres']:
+#     add_genre(cursor, genre)
+#
+# update_all_movies_infos()
 
-for genre in resp['genres']:
-    add_genre(cursor, genre)
 
-update_all_movies_infos()
+# Wrapper request pour obtenir les acteurs
+# Récupérer tous les IDs des films de la base de données
+cursor.execute("SELECT entries_id FROM entries")
+movie_ids = cursor.fetchall()
+universe_fk = None
+
+for (movie_id,) in movie_ids:
+    movies = tmdb.Movies(movie_id)
+    resp = movies.credits()
+    add_cast_and_director(cursor, max_actors=3, movie_id=movie_id,
+                          cast=resp['cast'], crew=resp['crew'])
 
 # commit les changements
 connection.commit()
