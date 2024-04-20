@@ -16,6 +16,7 @@
         <a href="/tv_shows">TV Shows</a>
         {% if 'user_id' in session %}
             <a href="/logout">Logout</a>
+            <a href="/watchlist">Watchlist</a>
         {% else %}
             <a href="/login">Login</a>
             <a href="/register">Create account</a>
@@ -33,6 +34,10 @@
             <h3>{{ movie.title }}</h3>
             <p>Release Year: {{ movie.date }}</p>
             <p>Overview: {{ movie.overview }}</p>
+            <form action="/watchlist" method="POST">
+                <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                <button type="submit">Add to Watchlist</button>
+            </form>
         </div>
         {% endfor %}
     </div>

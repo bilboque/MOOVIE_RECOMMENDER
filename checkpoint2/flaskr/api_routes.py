@@ -1,6 +1,7 @@
 from flask import (jsonify, render_template,
-                   request, session, Blueprint)
+                   request, session, Blueprint, url_for, redirect)
 from db import get_db_connection
+import auth
 
 api_bp = Blueprint('api_routes', __name__)
 
@@ -55,3 +56,26 @@ def searchEntry(query):
     cursor.close()
     connection.close()
     return output
+
+
+@api_bp.route('/api/watchlist', methods=['GET'])
+def view_watchlist():
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    # Check if user is logged in
+    if 'user_id' not in session:
+        cursor.close()
+        connection.close()
+        return redirect(url_for(auth.login))
+
+    user_id = session['user_id']
+
+    cursor.execute(
+        "SELECT * FROM entries INNER JOIN watchlist ON entries.entries_id = watchlist.entries_id_fk WHERE watchlist.user_id_fk = %s", (
+            user_id,)
+    )
+    watchlist = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return watchlist

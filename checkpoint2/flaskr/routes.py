@@ -1,7 +1,7 @@
 from flask import (jsonify, render_template,
                    request, session, Blueprint)
 from db import get_db_connection
-from api_routes import getIndex, getMovies, searchEntry, getMovieDetails
+from api_routes import getIndex, getMovies, searchEntry, getMovieDetails, view_watchlist
 routes_bp = Blueprint('routes', __name__)
 
 
@@ -31,31 +31,13 @@ def search():
     return render_template('app.html', output=search)
 
 
-# Watchlist route
-@routes_bp.route('/watchlist', methods=['GET'])
-# @login_required  # decorator to ensure that only authenticated users can access the route
-def view_watchlist():
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-    # Check if user is logged in
-    if 'user_id' not in session:
-        return jsonify({"error": "User not logged in"}), 401
-
-    user_id = session['user_id']
-
-    cursor.execute(
-        "SELECT * watchlist where id = %s", (user_id))
-    watchlist = cursor.fetchall()
-    cursor.close()
-    connection.close()
-
-    if watchlist:
-        return jsonify(watchlist), 200
-    else:
-        return jsonify({"message": "Watchlist is empty"}), 404
-
-
 @routes_bp.route('/moviedetails', methods=['GET'])
 def movieDetails(id):
     details = getMovieDetails(id)
     return render_template('app.html', output=details)
+
+
+@routes_bp.route('/watchlist', methods=['GET'])
+def viewWatchlist():
+    watchlist = view_watchlist()
+    return render_template('app.html', output=watchlist)

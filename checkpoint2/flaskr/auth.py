@@ -46,19 +46,23 @@ def login():
         password = request.form['password']
         error = None
 
-        user = cursor.execute(
-            "SELECT * FROM user WHERE pseudo = %s", (username,)
-        ).fetchone()
-        print(user)
+        try:
+            cursor.execute(
+                "SELECT * FROM user WHERE pseudo = %s", (username,)
+            )
+            user = cursor.fetchone()
+            print("User:", user)
+        except Exception as e:
+            print("Error executing SQL query:", e)
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['mot_de_passe'], password):
+        elif not check_password_hash(user[3], password):
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            session['user_id'] = user[0]
             return redirect(url_for('routes.index'))
 
         flash(error)
@@ -69,5 +73,5 @@ def login():
 @auth_bp.route('/logout')
 def logout():
     # remove the username from the session if it's there
-    session.pop('username', None)
-    return redirect(url_for('index'))
+    session.pop('user_id', None)
+    return redirect(url_for('routes.index'))
