@@ -1,5 +1,5 @@
 @startuml
-
+left to right direction
 [client]
 package "Flask application" as FA{
 	[Routes] as R
@@ -8,21 +8,22 @@ package "Flask application" as FA{
 	[Database] as D
 }
 
-database "MySQL database"{
-	
+database "MySQL database" as md #LightBlue{
 }
 
 D ..|> R
 D ..|> A
-[client] ..> R : normal request
-R ..> MySQL : normal request
-MySQL ..> R : normal response
-R ..> [client] : normal response
+[client] ..> R : standard request
+R ..> AR : standard request
+AR ..> md : standard request
+md ..> AR : standard response
+AR ..> R : standard response
+R ..> [client] : standard response
 
-[client] ..> A : login/registration request
-A ..> MySQL : login/registration request
-MySQL ..> A : login/registration response
-A ..> [client] : login/registration response
+[client] ..> A : Authentication request
+A ..> md : Authentication request
+md ..> A : Authentication response
+A ..> [client] : Authentication response
 
 
 @enduml
