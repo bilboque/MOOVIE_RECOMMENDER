@@ -6,25 +6,30 @@ body {
 }
 
 header {
-    background-color: #1a237e; /* Dark Blue */
-    color: #fff; /* White */
+    background-color: #1a237e; 
+    color: #fff; 
     padding: 10px;
     text-align: center;
-    background-image: url('neonflames.png'); /* Replace 'your-image-url.jpg' with the URL of your image */
-    background-size: cover; /* Ensure the image covers the entire container */
-    background-position: center; /* Center the background image */
+    background-image: url('neonflames.png'); 
+    background-size: cover;
+    background-position: center;
 }
 
 nav {
-    background-color: #100c08; /* Purple */
+    background-color: #100c08;
     padding: 10px;
     text-align: center;
 }
 
 nav a {
-    color: #FCF7F8; /* Orange */
+    color: #FCF7F8; 
     text-decoration: none;
     margin: 0 10px;
+    display: inline-block;
+}
+
+nav .search-container{
+    margin-left: auto; 
     display: inline-block;
 }
 
@@ -36,11 +41,12 @@ nav a {
     padding: 0 20px;
     grid-gap: 10px; /* Adjust the value to your preference */
     border: 1px solid #000; /* Add a border around the entire grid */
+    background-color: #dbd7d2;
 }
 
 .movie {
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 5px; /* Rounded corners */
     padding: 10px;
     margin-bottom: 20px;
 }
@@ -59,14 +65,10 @@ nav a {
     margin: 5px 0;
 }
 
-.search-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
 .container.full-width {
     max-width: none;
     margin: 0;
     padding: 0;
 }
+
 

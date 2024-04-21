@@ -21,13 +21,13 @@
             <a href="/login">Login</a>
             <a href="/register">Create account</a>
         {% endif %}
+        <div class="search-container">
+            <form action="/search" method="GET">
+                <input type="text" name="query" placeholder="Search for a movie...">
+                <input type="submit" value="Search">
+            </form>
+        </div>
     </nav>
-    <div class="search-container">
-        <form action="/search" method="GET">
-            <input type="text" name="query" placeholder="Search for a movie...">
-            <input type="submit" value="Search">
-        </form>
-    </div>
     <div class="container full-width">
         {% for movie in output %}
         <div class="movie">
