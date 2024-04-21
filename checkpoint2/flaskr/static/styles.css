@@ -31,7 +31,10 @@ nav a {
     margin: 20px auto;
     max-width: 800px;
     padding: 0 20px;
+    grid-gap: 10px; /* Adjust the value to your preference */
+    border: 1px solid #000; /* Add a border around the entire grid */
 }
+
 
 .movie {
     background-color: #fff;
