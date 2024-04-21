@@ -34,8 +34,8 @@
             <h3>{{ movie.title }}</h3>
             <p>Release Year: {{ movie.date }}</p>
             <p>Overview: {{ movie.overview }}</p>
-            <form action="/watchlist" method="POST">
-                <input type="hidden" name="movie_id" value="{{ movie.id }}">
+            <form action="/add" method="POST">
+                <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
                 <button type="submit">Add to Watchlist</button>
             </form>
         </div>

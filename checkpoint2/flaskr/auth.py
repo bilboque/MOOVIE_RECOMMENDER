@@ -51,7 +51,6 @@ def login():
                 "SELECT * FROM user WHERE pseudo = %s", (username,)
             )
             user = cursor.fetchone()
-            print("User:", user)
         except Exception as e:
             print("Error executing SQL query:", e)
 

@@ -79,3 +79,21 @@ def view_watchlist():
     connection.close()
 
     return watchlist
+
+
+@api_bp.route('/api/add', methods=['POST'])
+def api_add_to_watchlist(user_id, movie_id):
+
+    if 'user_id' not in session:
+        return jsonify({'error': 'User not logged in'}), 401
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute(
+        "INSERT INTO watchlist (user_id, movie_id) VALUES (%s, %s)",
+        (user_id, movie_id))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return jsonify({'message': 'Movie added to watchlist successfully'}), 200
