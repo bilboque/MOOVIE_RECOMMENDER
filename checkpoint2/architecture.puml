@@ -11,7 +11,7 @@ package "Flask application" as FA{
 database "MySQL database" as md #LightBlue{
 }
 
-D ..|> R
+D ..|> AR
 D ..|> A
 [client] ..> R : standard request
 R ..> AR : standard request
