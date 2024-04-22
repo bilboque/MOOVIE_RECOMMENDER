@@ -4,7 +4,7 @@ import mysql.connector
 
 
 # Function that takes in movie title as input and outputs most similar movies
-def get_recommendations(movie):
+def get_recommendations(movie_list):
     # connection to DB
     connection = mysql.connector.connect(
         host="localhost",
@@ -18,42 +18,63 @@ def get_recommendations(movie):
 
     # Load-data
     metadata_query = """
-    SELECT entries.entries_id, entries.title, entries.overview
-    FROM entries
+    SELECT entries.entries_id, entries.title, entries.overview, people.name
+    FROM entries, role, people
+    WHERE entries.entries_id = role.entries_id_fk
+        AND role.people_id_fk = people.people_id
     """
     cursor.execute(metadata_query)
     results = cursor.fetchall()
 
     titles = []
-    overviews = []
+    metadata = {}
+    director_weight = 3
 
-    # Check if overviews are not None and then append to list
-    for entry_id, title, overview in results:
-        if overview:  # only consider entries with an overview
+    for entry_id, title, overview, actor_name in results:
+        if title not in metadata:
+            # Initialisation des données pour un nouveau film
+            metadata[title] = {'overview': overview, 'actors': []}
             titles.append(title)
-            overviews.append(overview)
+        # Ajout de chaque acteur à la liste des acteurs pour ce film
+        metadata[title]['actors'].append(actor_name)
 
+    # Création des métadonnées finales après agrégation
+    final_metadata = []
+    for title in titles:
+        actors_string = ' '.join(metadata[title]['actors']) * director_weight
+        overview = (metadata[title]['overview'] + ' ')
+        combined_text = overview + ' ' + actors_string
+        final_metadata.append(combined_text)
+    
     # Initialize the TF-IDF Vectorizer
     tf_idf = TfidfVectorizer(stop_words='english')
 
     # Fit and transform the overviews to TF-IDF
-    tfidf_matrix = tf_idf.fit_transform(overviews)
+    tfidf_matrix = tf_idf.fit_transform(final_metadata)
 
-    # Display some results or further process tfidf_matrix
-    print("TF-IDF features shape:", tfidf_matrix.shape)
+    # Concatenate the overviews of the input movies
+    input_metadata = []
+    for title in movie_list:
+        input_metadata.append(final_metadata[titles.index(title)])
+    input_text = ' '.join(input_metadata)  # Concatenate texts
+    print(input_text)
+    # Transform the concatenated input movie metadata
+    input_tfidf = tf_idf.transform([input_text])
 
-    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+    # Compute cosine similarities between input movies and database entries
+    cosine_similarities = linear_kernel(input_tfidf, tfidf_matrix).flatten()
 
-    idx = titles.index(movie)
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:11]
+    # Get top 10 similar movies
+    top_indices = cosine_similarities.argsort()[-11:][::-1]
+    # Exclude self-match if any of the input movies are also in the fetched results
+    top_indices = [i for i in top_indices if titles[i] not in movie_list][:10]
 
-    movie_indices = [i[0] for i in sim_scores]
-
-    for i in movie_indices:
-        print(titles[i])
+    # Print or return the titles of the top recommendations
+    recommended_titles = [titles[i] for i in top_indices]
+    for title in recommended_titles:
+        print(title)
 
     cursor.close()
     connection.close()
-    return
+
+    return recommended_titles
