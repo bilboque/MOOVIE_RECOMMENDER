@@ -1,5 +1,5 @@
 import tmdbsimple as tmdb
-import mysql.connector  # this works
+import mysql.connector
 
 
 # ajoute un film
