@@ -2,6 +2,52 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import mysql.connector
 
+import mplcursors
+import matplotlib
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+
+
+def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
+    # titles = titles[:1000]
+    # tfidf_matrix = tfidf_matrix[:1000]
+    # Initialize t-SNE
+    tsne = TSNE(n_components=2, verbose=1, perplexity=40)
+    tsne_results = tsne.fit_transform(tfidf_matrix.toarray())
+
+    # Setting up color map
+    colors = {'Science Fiction': 'blue', 'Romance': 'red',
+              'Both': 'green', 'Other': 'grey'}
+
+    # Plotting
+    plt.figure(figsize=(16, 10))
+    scatter_colors = []
+
+    for i, title in enumerate(titles):
+        genres = meta_data[title]['genres']
+        if 'Science Fiction' in genres and 'Romance' in genres:
+            cl = colors['Both']
+        elif 'Science Fiction' in genres:
+            cl = colors['Science Fiction']
+        elif 'Romance' in genres:
+            cl = colors['Romance']
+        else:
+            cl = colors['Other']
+
+        scatter_colors.append(cl)
+
+    scatter = plt.scatter(tsne_results[:, 0],
+                          tsne_results[:, 1],
+                          color=scatter_colors, alpha=0.5)
+    cursor = mplcursors.cursor(scatter, hover=True)
+    cursor.connect("add", lambda sel: sel.annotation.set_text(
+        titles[sel.target.index]))
+
+    plt.title('t-SNE visualization of Movie Data by Genre')
+    plt.xlabel('t-SNE feature 1')
+    plt.ylabel('t-SNE feature 2')
+    plt.show()
+
 
 def db_connect():
     connection = mysql.connector.connect(
@@ -61,7 +107,7 @@ def get_recommendations(movie_list):
     for title, genre in results:
         metadata[title]['genres'].append(genre)
 
-    genres_weight = 2
+    genres_weight = 5
     actors_weight = 3
     overview_wght = 1
 
@@ -81,6 +127,7 @@ def get_recommendations(movie_list):
 
     # Fit and transform the overviews to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
+    plot_tsne_with_genres(tfidf_matrix, titles, metadata)
 
     # Concatenate the overviews of the input movies
     input_metadata = []

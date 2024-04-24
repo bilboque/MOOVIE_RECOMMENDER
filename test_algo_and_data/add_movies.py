@@ -5,7 +5,8 @@ import mysql.connector
 # ajoute un film
 def add_movie(cursor, movie: dict):
     # Vérifier si le film existe déjà
-    cursor.execute("SELECT entries_id FROM entries WHERE entries_id = %s", (movie['id'],))
+    cursor.execute(
+        "SELECT entries_id FROM entries WHERE entries_id = %s", (movie['id'],))
     if cursor.fetchone():
         print(f"Le film avec l'ID {movie['id']} existe déjà.")
         return
@@ -38,7 +39,8 @@ def add_movie(cursor, movie: dict):
 # Ajoute un genre a la db
 def add_genre(cursor, genre: dict):
     # Vérifier si le genre existe déjà
-    cursor.execute("SELECT category_id FROM category WHERE category_id = %s", (genre['id'],))
+    cursor.execute(
+        "SELECT category_id FROM category WHERE category_id = %s", (genre['id'],))
     if cursor.fetchone():
         print(f"Le genre avec l'ID {genre['id']} existe déjà.")
         return
@@ -74,7 +76,8 @@ def update_all_movies_infos():
             movies = tmdb.Movies(movie_id)
             resp = movies.info()
         except Exception as e:
-            print(f"Erreur lors de la récupération des détails pour le film ID {movie_id}: {e}")
+            print(
+                f"Erreur lors de la récupération des détails pour le film ID {movie_id}: {e}")
             continue
 
         # Ajouter les genres dans la table entries_category
@@ -84,22 +87,26 @@ def update_all_movies_infos():
             VALUES (%s, %s)
             """
             cursor.execute(insert_genre_query, (movie_id, genre['id']))
-            print(f"Ajout de la relation '{genre['name']}' avec le film id {movie_id}")
+            print(
+                f"Ajout de la relation '{genre['name']}' avec le film id {movie_id}")
 
         # Creation de l'univers si besoin
         collection = resp['belongs_to_collection']
         if collection:
             # Vérifier si la collection existe déjà dans la table universe
-            cursor.execute("SELECT universe_id FROM universe WHERE universe_id = %s", (collection['id'],))
+            cursor.execute(
+                "SELECT universe_id FROM universe WHERE universe_id = %s", (collection['id'],))
             if not cursor.fetchone():
                 # Si elle n'existe pas, insérez-la
                 insert_universe_query = """
                 INSERT INTO universe (universe_id, name, description)
                 VALUES (%s, %s, NULL)
                 """
-                cursor.execute(insert_universe_query, (collection['id'], collection['name']))
+                cursor.execute(insert_universe_query,
+                               (collection['id'], collection['name']))
                 universe_fk = collection['id']
-                print(f"Ajout de la collection '{collection['name']}' avec le film id {movie_id}")
+                print(
+                    f"Ajout de la collection '{collection['name']}' avec le film id {movie_id}")
             else:
                 universe_fk = None
 
@@ -110,7 +117,8 @@ def update_all_movies_infos():
         SET length = %s, universe_id_fk = %s
         WHERE entries_id = %s
         """
-        cursor.execute(update_query, (f"{runtime//60:02}:{runtime%60:02}:00", universe_fk, movie_id))
+        cursor.execute(
+            update_query, (f"{runtime//60:02}:{runtime%60:02}:00", universe_fk, movie_id))
         print(f"Update movie (id = {movie_id})")
 
     print("Update process completed.")
@@ -133,7 +141,8 @@ def add_cast_and_director(cursor, movie_id: int,
                     movie_id)
 
     # Find and add the director from the crew
-    director = next((member for member in crew if member.get('job') == 'Director'), None)
+    director = next(
+        (member for member in crew if member.get('job') == 'Director'), None)
     if director and not person_exists(cursor, director['id']):
         insert_person(cursor, director)
         # Insert the director's role into the role table
@@ -141,7 +150,8 @@ def add_cast_and_director(cursor, movie_id: int,
 
 
 def person_exists(cursor, person_id):
-    cursor.execute("SELECT people_id FROM people WHERE people_id = %s", (person_id,))
+    cursor.execute(
+        "SELECT people_id FROM people WHERE people_id = %s", (person_id,))
     return cursor.fetchone() is not None
 
 
@@ -178,7 +188,8 @@ def insert_role(cursor, person_id, job, character, movie_id):
     """
     role_data = (job, character, movie_id, person_id)
     cursor.execute(insert_query, role_data)
-    print(f"Role {job} for character {character or 'N/A'} added for movie ID {movie_id}.")
+    print(
+        f"Role {job} for character {character or 'N/A'} added for movie ID {movie_id}.")
 
 
 # connection to DB
