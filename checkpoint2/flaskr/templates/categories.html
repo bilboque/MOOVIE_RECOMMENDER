@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyMovieDB</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MyMovieDB - Categories</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='category.css') }}">
 </head>
 <body>
     <header>
@@ -29,21 +29,13 @@
             </form>
         </div>
     </nav>
-    <div class="container full-width">
-        {% for movie in output %}
-        <a href="/movie/{{ movie.entries_id }}" class="details-link">
-            <div class="movie">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.date }}</p>
-                <p><strong>Overview</strong></p>
-                <p>{{ movie.overview }}</p>
-                <form action="/add/{{ movie.entries_id }}" method="POST">
-                    <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                    <button type="submit">Add to Watchlist</button>
-                </form>
-            </div>
-        </a>
-        {% endfor %}
+    <div class="container full-width categories">
+        <h2>Movie Categories</h2>
+        <ul>
+            {% for category in output %}
+                <li><a href="/category/{{ category }}">{{ category }}</a></li>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>

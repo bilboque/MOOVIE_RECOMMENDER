@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyMovieDB</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>My Movie Watchlist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='watchlist.css') }}">
 </head>
 <body>
     <header>
-        <h1>DBMi</h1>
+        <h1>My Watchlist</h1>
     </header>
     <nav>
         <a href="/">Home</a>
         <a href="/movies">Movies</a>
         <a href="/tv_shows">TV Shows</a>
-        <a href="/category">Categories</a>
         {% if 'user_id' in session %}
             <a href="/logout">Logout</a>
             <a href="/watchlist">Watchlist</a>
@@ -29,21 +28,25 @@
             </form>
         </div>
     </nav>
-    <div class="container full-width">
-        {% for movie in output %}
-        <a href="/movie/{{ movie.entries_id }}" class="details-link">
+    <div class="container full-width watchlist">
+        {% if output %}
+            {% for movie in output %}
             <div class="movie">
                 <h3>{{ movie.title }}</h3>
-                <p>{{ movie.date }}</p>
-                <p><strong>Overview</strong></p>
-                <p>{{ movie.overview }}</p>
-                <form action="/add/{{ movie.entries_id }}" method="POST">
+                <p>Release Year: {{ movie.date }}</p>
+                <p class="overview"><strong>Overview:</strong> 
+                    <li>{{ movie.overview }}</li>
+                </p>
+                <form action="/remove/{{ movie.entries_id }}" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                    <button type="submit">Add to Watchlist</button>
+                    <button type="submit">Remove from Watchlist</button>
                 </form>
             </div>
-        </a>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <p>Your watchlist is empty.</p>
+        {% endif %}
     </div>
 </body>
 </html>

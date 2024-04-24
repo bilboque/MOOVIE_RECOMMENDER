@@ -14,7 +14,6 @@
         <a href="/">Home</a>
         <a href="/movies">Movies</a>
         <a href="/tv_shows">TV Shows</a>
-        <a href="/category">Categories</a>
         {% if 'user_id' in session %}
             <a href="/logout">Logout</a>
             <a href="/watchlist">Watchlist</a>
@@ -29,22 +28,17 @@
             </form>
         </div>
     </nav>
-    <div class="container full-width">
-        {% for movie in output %}
-        <a href="/movie/{{ movie.entries_id }}" class="details-link">
-            <div class="movie">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.date }}</p>
-                <p><strong>Overview</strong></p>
-                <p>{{ movie.overview }}</p>
-                <form action="/add/{{ movie.entries_id }}" method="POST">
-                    <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                    <button type="submit">Add to Watchlist</button>
-                </form>
-            </div>
-        </a>
-        {% endfor %}
+    <div class="movie full-width">
+        <h3>{{ output.title }}</h3>
+        <p>{{ output.categories }}</p>
+        <p><strong>Overview</strong></p>
+        <p>{{ output.overview }}</p>
+        <p>Length: {{ output.length }}</p>
+        <p>{{ output.date }}</p>
+        <form action="/add" method="POST">
+            <input type="hidden" name="entries_id" value="{{ output.entries_id }}">
+            <button type="submit">Add to Watchlist</button>
+        </form>
     </div>
 </body>
 </html>
-

@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #1a237e; 
+    color: #fff; 
+    padding: 10px;
+    text-align: center;
+    background-image: url('purple_flames.png'); 
+    background-size: cover;
+    background-position: center;
+}
+
+nav {
+    background-color: #100c08;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: #FCF7F8; 
+    text-decoration: none;
+    margin: 0 10px;
+    display: inline-block;
+}
+
+nav .search-container{
+    margin-left: auto; 
+    display: inline-block;
+}
+
+.container.categories {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container.categories h2 {
+    margin-top: 0;
+}
+
+.container.categories ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.container.categories li {
+    margin-bottom: 10px;
+}
+
+.container.categories li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.container.categories li a:hover {
+    color: #555;
+}
+

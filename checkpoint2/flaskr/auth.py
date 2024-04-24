@@ -3,6 +3,7 @@ from flask import (Blueprint, render_template, request, session, redirect,
                    url_for, flash)
 from db import get_db_connection
 import mysql.connector
+import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -15,6 +16,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        date = datetime.date.today()
         error = None
 
         if not username:
@@ -25,8 +27,8 @@ def register():
         if error is None:
             try:
                 cursor.execute(
-                    "INSERT INTO user (pseudo, mot_de_passe) VALUES (%s, %s)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (pseudo, inscription_date, mot_de_passe) VALUES (%s, %s, %s)",
+                    (username, date, generate_password_hash(password)),
                 )
                 connection.commit()
             except mysql.connector.IntegrityError:
