@@ -6,13 +6,14 @@ import mplcursors
 import matplotlib
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
-    # titles = titles[:1000]
-    # tfidf_matrix = tfidf_matrix[:1000]
+    titles = titles[:1000]
+    tfidf_matrix = tfidf_matrix[:1000]
     # Initialize t-SNE
-    tsne = TSNE(n_components=2, verbose=1, perplexity=40)
+    tsne = TSNE(n_components=3, verbose=1, perplexity=40)
     tsne_results = tsne.fit_transform(tfidf_matrix.toarray())
 
     # Setting up color map
@@ -20,7 +21,7 @@ def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
               'Both': 'green', 'Other': 'grey'}
 
     # Plotting
-    plt.figure(figsize=(16, 10))
+    fig = plt.figure(figsize=(16, 10))
     scatter_colors = []
 
     for i, title in enumerate(titles):
@@ -36,16 +37,19 @@ def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
 
         scatter_colors.append(cl)
 
-    scatter = plt.scatter(tsne_results[:, 0],
-                          tsne_results[:, 1],
-                          color=scatter_colors, alpha=0.5)
+    ax = fig.add_subplot(111, projection='3d')
+    scatter = ax.scatter(tsne_results[:, 0],
+                         tsne_results[:, 1],
+                         tsne_results[:, 2],
+                         color=scatter_colors, alpha=0.5)
     cursor = mplcursors.cursor(scatter, hover=True)
     cursor.connect("add", lambda sel: sel.annotation.set_text(
         titles[sel.target.index]))
 
-    plt.title('t-SNE visualization of Movie Data by Genre')
-    plt.xlabel('t-SNE feature 1')
-    plt.ylabel('t-SNE feature 2')
+    ax.set_title('t-SNE visualization of Movie Data by Genre')
+    ax.set_xlabel('t-SNE feature 1')
+    ax.set_ylabel('t-SNE feature 2')
+    ax.set_zlabel('t-SNE feature 3')
     plt.show()
 
 
@@ -107,9 +111,13 @@ def get_recommendations(movie_list):
     for title, genre in results:
         metadata[title]['genres'].append(genre)
 
-    genres_weight = 5
+    # default weights
+    genres_weight = 3
     actors_weight = 3
     overview_wght = 1
+
+    if not set(movie_list).issubset(set(titles)):
+        overview_wght = 5
 
     # Création des métadonnées finales après agrégation
     final_metadata = []
@@ -119,22 +127,26 @@ def get_recommendations(movie_list):
         genres_string = (
             ' '.join(metadata[title]['genres']) + ' ') * genres_weight
         overview = ((metadata[title]['overview']) + ' ') * overview_wght
-        combined_text = overview + ' ' + actors_string + ' ' + genres_string
+        combined_text = overview + ' ' + actors_string + ' ' + genres_string + ' ' + title
         final_metadata.append(combined_text)
 
     # Initialize the TF-IDF Vectorizer
-    tf_idf = TfidfVectorizer(stop_words='english')
+    tf_idf = TfidfVectorizer(stop_words='english', strip_accents='ascii')
 
     # Fit and transform the overviews to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
-    plot_tsne_with_genres(tfidf_matrix, titles, metadata)
+    # plot_tsne_with_genres(tfidf_matrix, titles, metadata)
 
     # Concatenate the overviews of the input movies
     input_metadata = []
     for title in movie_list:
-        input_metadata.append(final_metadata[titles.index(title)])
+        if title in titles:
+            input_metadata.append(final_metadata[titles.index(title)])
+        else:
+            input_metadata.append(title)
+
     input_text = ' '.join(input_metadata)  # Concatenate texts
-    print(input_text)
+    # print(input_text)
 
     # Transform the concatenated input movie metadata
     input_tfidf = tf_idf.transform([input_text])
