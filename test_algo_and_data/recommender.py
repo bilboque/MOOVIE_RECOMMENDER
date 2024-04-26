@@ -7,11 +7,13 @@ import matplotlib
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.lines as mlines
+from sklearn.metrics.pairwise import euclidean_distances
 
 
 def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
-    titles = titles[:1000]
-    tfidf_matrix = tfidf_matrix[:1000]
+    titles = titles[:9000]
+    tfidf_matrix = tfidf_matrix[:9000]
     # Initialize t-SNE
     tsne = TSNE(n_components=3, verbose=1, perplexity=40)
     tsne_results = tsne.fit_transform(tfidf_matrix.toarray())
@@ -46,6 +48,15 @@ def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
     cursor.connect("add", lambda sel: sel.annotation.set_text(
         titles[sel.target.index]))
 
+    # Create legend dynamically from the colors dict
+    legend_elements = [mlines.Line2D([0], [0], marker='o',
+                                     color='w',
+                                     markerfacecolor=color,
+                                     markersize=10,
+                                     label=genre)
+                       for genre, color in colors.items()]
+
+    ax.legend(handles=legend_elements, loc='upper right')
     ax.set_title('t-SNE visualization of Movie Data by Genre')
     ax.set_xlabel('t-SNE feature 1')
     ax.set_ylabel('t-SNE feature 2')
@@ -112,7 +123,7 @@ def get_recommendations(movie_list):
         metadata[title]['genres'].append(genre)
 
     # default weights
-    genres_weight = 3
+    genres_weight = 2
     actors_weight = 3
     overview_wght = 1
 
@@ -152,10 +163,12 @@ def get_recommendations(movie_list):
     input_tfidf = tf_idf.transform([input_text])
 
     # Compute cosine similarities between input movies and database entries
-    cosine_similarities = linear_kernel(input_tfidf, tfidf_matrix).flatten()
+    # dist = 1 - linear_kernel(input_tfidf, tfidf_matrix).flatten()
+    # Calculate Euclidean distances
+    dist = euclidean_distances(input_tfidf, tfidf_matrix).flatten()
 
     # Get top 10 similar movies
-    top_indices = cosine_similarities.argsort()[::-1]
+    top_indices = dist.argsort()[::]
     top_indices = [i for i in top_indices if titles[i] not in movie_list][:10]
 
     # Print or return the titles of the top recommendations
