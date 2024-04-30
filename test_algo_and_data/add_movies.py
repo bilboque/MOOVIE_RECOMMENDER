@@ -192,6 +192,25 @@ def insert_role(cursor, person_id, job, character, movie_id):
         f"Role {job} for character {character or 'N/A'} added for movie ID {movie_id}.")
 
 
+def add_keywords(cursor, keywords: list, movie_id):
+    insert_keywords = """
+    INSERT INTO keywords (keywords_id, keywords)
+    VALUES (%s, %s)
+    ON DUPLICATE KEY UPDATE keywords_id=keywords_id
+    """
+    insert_entries_keywords = """
+    INSERT INTO entries_keywords (entries_id_fk, keywords_id_fk)
+    VALUES (%s, %s)
+    ON DUPLICATE KEY UPDATE keywords_id_fk=keywords_id_fk
+    """
+    for keyword in keywords:
+        cursor.execute(insert_keywords, (keyword['id'], keyword['name']))
+        cursor.execute(insert_entries_keywords, (movie_id, keyword['id']))
+
+    print(f"inserted {len(keywords)} rows in entries_keywords and keywords")
+    return
+
+
 # connection to DB
 connection = mysql.connector.connect(
     host="localhost",
@@ -235,15 +254,26 @@ movies = tmdb.Movies()
 
 # Wrapper request pour obtenir les acteurs
 # Récupérer tous les IDs des films de la base de données
+# cursor.execute("SELECT entries_id FROM entries")
+# movie_ids = cursor.fetchall()
+# universe_fk = None
+#
+# for (movie_id,) in movie_ids:
+#     movies = tmdb.Movies(movie_id)
+#     resp = movies.credits()
+#     add_cast_and_director(cursor, max_actors=3, movie_id=movie_id,
+#                           cast=resp['cast'], crew=resp['crew'])
+
+# Wrapper request pour récupérer tout les keywords
 cursor.execute("SELECT entries_id FROM entries")
 movie_ids = cursor.fetchall()
-universe_fk = None
+
+movie_ids.sort()
 
 for (movie_id,) in movie_ids:
-    movies = tmdb.Movies(movie_id)
-    resp = movies.credits()
-    add_cast_and_director(cursor, max_actors=3, movie_id=movie_id,
-                          cast=resp['cast'], crew=resp['crew'])
+    movie = tmdb.Movies(movie_id)
+    resp = movie.keywords()
+    add_keywords(cursor, resp['keywords'], movie_id)
 
 # commit les changements
 connection.commit()
