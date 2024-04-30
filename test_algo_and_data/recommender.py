@@ -12,8 +12,8 @@ from sklearn.metrics.pairwise import euclidean_distances
 
 
 def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
-    titles = titles[:9000]
-    tfidf_matrix = tfidf_matrix[:9000]
+    titles = titles[:1000]
+    tfidf_matrix = tfidf_matrix[:1000]
     # Initialize t-SNE
     tsne = TSNE(n_components=3, verbose=1, perplexity=40)
     tsne_results = tsne.fit_transform(tfidf_matrix.toarray())
@@ -93,7 +93,10 @@ def get_recommendations(movie_list):
     metadata = {}
 
     for _, overview, title in results:
-        metadata[title] = {'overview': overview, 'actors': [], 'genres': []}
+        metadata[title] = {'overview': overview,
+                           'actors': [],
+                           'genres': [],
+                           'keywords': []}
         titles.append(title)
 
     # now fetch actors
@@ -122,13 +125,28 @@ def get_recommendations(movie_list):
     for title, genre in results:
         metadata[title]['genres'].append(genre)
 
+    # now fetch keywords
+    metadata_genres = """
+    select entries.title, keywords.keywords
+    from entries, entries_keywords, keywords
+    where entries.entries_id = entries_keywords.entries_id_fk
+        and entries_keywords.keywords_id_fk = keywords.keywords_id
+    """
+    cursor.execute(metadata_genres)
+    results = cursor.fetchall()
+
+    for title, keyword in results:
+        metadata[title]['keywords'].append(keyword)
+
     # default weights
+    keywords_wght = 3
     genres_weight = 2
-    actors_weight = 3
+    actors_weight = 2
     overview_wght = 1
 
     if not set(movie_list).issubset(set(titles)):
-        overview_wght = 5
+        overview_wght = 4
+        keywords_wght = 4
 
     # Création des métadonnées finales après agrégation
     final_metadata = []
@@ -138,7 +156,11 @@ def get_recommendations(movie_list):
         genres_string = (
             ' '.join(metadata[title]['genres']) + ' ') * genres_weight
         overview = ((metadata[title]['overview']) + ' ') * overview_wght
-        combined_text = overview + ' ' + actors_string + ' ' + genres_string + ' ' + title
+        keywords = (
+            ' '.join(metadata[title]['keywords']) + ' ') * keywords_wght
+
+        combined_text = overview + ' ' + actors_string + \
+            ' ' + genres_string + ' ' + title + ' ' + keywords
         final_metadata.append(combined_text)
 
     # Initialize the TF-IDF Vectorizer
@@ -146,7 +168,7 @@ def get_recommendations(movie_list):
 
     # Fit and transform the overviews to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
-    # plot_tsne_with_genres(tfidf_matrix, titles, metadata)
+    plot_tsne_with_genres(tfidf_matrix, titles, metadata)
 
     # Concatenate the overviews of the input movies
     input_metadata = []
@@ -157,7 +179,7 @@ def get_recommendations(movie_list):
             input_metadata.append(title)
 
     input_text = ' '.join(input_metadata)  # Concatenate texts
-    # print(input_text)
+    print(input_text)
 
     # Transform the concatenated input movie metadata
     input_tfidf = tf_idf.transform([input_text])
