@@ -9,6 +9,7 @@ from sklearn.manifold import TSNE
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.lines as mlines
 from sklearn.metrics.pairwise import euclidean_distances
+import itertools
 
 
 def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
@@ -139,7 +140,7 @@ def get_recommendations(movie_list):
         metadata[title]['keywords'].append(keyword)
 
     # default weights
-    keywords_wght = 3
+    keywords_wght = 5
     genres_weight = 2
     actors_weight = 2
     overview_wght = 1
@@ -168,7 +169,7 @@ def get_recommendations(movie_list):
 
     # Fit and transform the overviews to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
-    plot_tsne_with_genres(tfidf_matrix, titles, metadata)
+    # plot_tsne_with_genres(tfidf_matrix, titles, metadata)
 
     # Concatenate the overviews of the input movies
     input_metadata = []
