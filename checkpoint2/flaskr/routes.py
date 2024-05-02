@@ -36,7 +36,9 @@ def search():
 @routes_bp.route('/movie/<int:entries_id>', methods=['GET'])
 def movieDetails(entries_id):
     details = getMovieDetails(entries_id)
-    return render_template('movie_details.html', output=details)
+    similarMovies = request.get(
+        "/api/recommendation", header={"args": details.title})
+    return render_template('movie_details.html', output=details, output2=similarMovies)
 
 
 @routes_bp.route('/watchlist', methods=['GET'])

@@ -47,6 +47,15 @@ def getMovieDetails(entries_id):
     return movie
 
 
+@api_bp.route("/api/recommendation", methods=['GET'])
+def getRecommendation(title):
+    title = request.header.get('args')
+    # récupérer json en entrée
+    # appeler la fonction getRecommendation(list: list)
+    # jsonify la réponse de get recommendation
+    return None
+
+
 @api_bp.route('/api/search', methods=['GET'])  # search for a movie
 def searchEntry(query):
     connection = get_db_connection()
