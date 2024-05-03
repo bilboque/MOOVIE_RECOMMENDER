@@ -1,9 +1,11 @@
-from flask import (jsonify, render_template,
+from flask import (render_template,
                    request, session, Blueprint, url_for, redirect)
-from db import get_db_connection
 from api_routes import (getIndex, getMovies, searchEntry,
                         getMovieDetails, view_watchlist, api_add_to_watchlist,
-                        api_remove_from_watchlist, getCategories, get_specific_category)
+                        api_remove_from_watchlist, getCategories,
+                        get_specific_category)
+import requests
+
 routes_bp = Blueprint('routes', __name__)
 
 
@@ -36,8 +38,9 @@ def search():
 @routes_bp.route('/movie/<int:entries_id>', methods=['GET'])
 def movieDetails(entries_id):
     details = getMovieDetails(entries_id)
-    similarMovies = request.get(
-        "/api/recommendation", header={"args": details.title})
+    print(details)
+    similarMovies = requests.get(
+        "/api/recommendation", header={"args": details['title']})
     return render_template('movie_details.html', output=details, output2=similarMovies)
 
 

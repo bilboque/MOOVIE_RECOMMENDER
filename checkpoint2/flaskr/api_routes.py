@@ -1,7 +1,8 @@
-from flask import (jsonify, render_template,
+from flask import (jsonify,
                    request, session, Blueprint, url_for, redirect)
 from db import get_db_connection
 import auth
+from algo import get_recommendations
 
 api_bp = Blueprint('api_routes', __name__)
 
@@ -48,12 +49,13 @@ def getMovieDetails(entries_id):
 
 
 @api_bp.route("/api/recommendation", methods=['GET'])
-def getRecommendation(title):
-    title = request.header.get('args')
+def getRecommendations():
+    title = request.headers.get('args')
     # récupérer json en entrée
     # appeler la fonction getRecommendation(list: list)
     # jsonify la réponse de get recommendation
-    return None
+    recommendations = get_recommendations(title)
+    return jsonify(recommendations)
 
 
 @api_bp.route('/api/search', methods=['GET'])  # search for a movie

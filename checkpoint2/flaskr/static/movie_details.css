@@ -60,3 +60,21 @@ nav .search-container{
     margin: 0;
     padding: 0;
 }
+
+.recommendations {
+    background-color: #f3f3f3;
+    padding: 20px;
+}
+
+.recommendations h3 {
+    margin-top: 0;
+}
+
+.recommendations ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.recommendations li {
+    margin-bottom: 10px;
+}

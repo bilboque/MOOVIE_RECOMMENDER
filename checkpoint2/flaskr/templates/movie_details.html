@@ -40,5 +40,13 @@
             <button type="submit">Add to Watchlist</button>
         </form>
     </div>
+    <div class="recommendations">
+        <h3>Similar Movies</h3>
+        <ul>
+            {% for movie in output2 %}
+                <li>{{ movie }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
