@@ -51,9 +51,6 @@ def getMovieDetails(entries_id):
 @api_bp.route("/api/recommendation", methods=['GET'])
 def getRecommendations():
     title = request.headers.get('args')
-    # récupérer json en entrée
-    # appeler la fonction getRecommendation(list: list)
-    # jsonify la réponse de get recommendation
     recommendations = get_recommendations(title)
     return jsonify(recommendations)
 

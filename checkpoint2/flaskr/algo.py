@@ -4,13 +4,23 @@ from sklearn.metrics.pairwise import euclidean_distances
 import mysql.connector
 
 
+def read_db_password():
+    try:
+        with open('password.txt', 'r') as file:
+            password = file.readline().strip()  # Assuming password is stored in a single line
+        return password
+    except FileNotFoundError:
+        return None
+
+
 def db_connect():
+    # create db connection
     connection = mysql.connector.connect(
         host="localhost",
         port=3306,
         user="root",
-        password="root1234",
-        database="IMDb"
+        password=read_db_password(),
+        database="DBMi"  # db name to access
     )
 
     return connection.cursor(), connection
