@@ -1,9 +1,10 @@
 from flask import (render_template,
-                   request, session, Blueprint, url_for, redirect)
+                   request, session, Blueprint, url_for, redirect,
+                   jsonify)
 from api_routes import (getIndex, getMovies, searchEntry,
                         getMovieDetails, view_watchlist, api_add_to_watchlist,
                         api_remove_from_watchlist, getCategories,
-                        get_specific_category)
+                        get_specific_category, getSimilarMovieDetails)
 import requests
 
 routes_bp = Blueprint('routes', __name__)
@@ -39,8 +40,14 @@ def search():
 def movieDetails(entries_id):
     details = getMovieDetails(entries_id)
     similarMovies = requests.get(
-        "http://127.0.0.1:5000/api/recommendation", headers={"args": details['title']})
-    return render_template('movie_details.html', output=details, output2=similarMovies)
+        "http://127.0.0.1:5000/api/recommendation",
+        headers={"args": details['title']})  # this returns a byte string
+    similarContent = similarMovies.text
+    similar = eval(similarContent)  # parses string as list
+    # similarMovieDetails = getSimilarMovieDetails(similar)
+    # print('Similar movie details: ', similarMovieDetails)
+    return render_template('movie_details.html', output=details,
+                           output2=similar)
 
 
 @routes_bp.route('/watchlist', methods=['GET'])

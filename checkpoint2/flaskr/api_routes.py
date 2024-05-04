@@ -3,6 +3,7 @@ from flask import (jsonify,
 from db import get_db_connection
 import auth
 from algo import get_recommendations
+import json
 
 api_bp = Blueprint('api_routes', __name__)
 
@@ -48,11 +49,29 @@ def getMovieDetails(entries_id):
     return movie
 
 
+def getSimilarMovieDetails(titles):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    similar_movies_details = []
+
+    for title in titles:
+        cursor.execute(
+            "SELECT entries.*, (SELECT GROUP_CONCAT(category_name SEPARATOR ', ') FROM category JOIN entries_category ON category.category_id = entries_category.category_id_fk WHERE entries_category.entries_id_fk = entries.entries_id) AS categories FROM entries WHERE entries.title = %s;", (title,))
+        movie = cursor.fetchone()
+        similar_movies_details.append(movie)
+
+    cursor.close()
+    connection.close()
+
+    return similar_movies_details
+
+
 @api_bp.route("/api/recommendation", methods=['GET'])
 def getRecommendations():
     title = request.headers.get('args')
     recommendations = get_recommendations(title)
-    return jsonify(recommendations)
+    return recommendations
 
 
 @api_bp.route('/api/search', methods=['GET'])  # search for a movie
