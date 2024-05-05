@@ -33,6 +33,11 @@ nav .search-container{
     display: inline-block;
 }
 
+nav section.new_index div.search,
+nav section.new_index div.title {
+  width:100%
+}
+
 .container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -76,3 +81,4 @@ nav .search-container{
     text-decoration: none; 
     color: inherit; 
 }
+
