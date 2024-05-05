@@ -8,7 +8,7 @@ import json
 api_bp = Blueprint('api_routes', __name__)
 
 
-@api_bp.route("/api")
+@api_bp.route("/api", methods=['GET'])
 def getIndex():
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
@@ -23,26 +23,26 @@ def getIndex():
     return output
 
 
-@api_bp.route("/api/movies/", methods=['GET'])
-def getMovies():
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-    mysql_query = """SHOW title FROM entries LIMIT 10;"""
-    cursor.execute(mysql_query)
-    output = cursor.fetchall()
-
-    cursor.close()
-    connection.close()
-
-    return jsonify(output)
-
-
 @api_bp.route("/api/movies/<int:entries_id>", methods=['GET'])
 def getMovieDetails(entries_id):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
     cursor.execute(
-        "SELECT entries.*, (SELECT GROUP_CONCAT(category_name SEPARATOR ', ') FROM category JOIN entries_category ON category.category_id = entries_category.category_id_fk WHERE entries_category.entries_id_fk = entries.entries_id) AS categories FROM entries WHERE entries.entries_id = %s;", (entries_id,))
+        """
+        SELECT
+            entries.entries_id,
+            entries.date,
+            entries.title,
+            entries.length,
+            entries.universe_id_fk,
+            entries.overview,
+            (SELECT GROUP_CONCAT(category_name SEPARATOR ', ')
+                FROM category JOIN entries_category ON category.category_id = entries_category.category_id_fk
+                WHERE entries_category.entries_id_fk = entries.entries_id)
+                AS categories
+        FROM entries
+        WHERE entries.entries_id = %s;
+        """, (entries_id,))
     movie = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -53,18 +53,24 @@ def getSimilarMovieDetails(titles):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
-    similar_movies_details = []
+    # similar_movies_details = []
+    title_placeholders = ','.join(['%s'] * len(titles))
 
     for title in titles:
         cursor.execute(
-            "SELECT entries.*, (SELECT GROUP_CONCAT(category_name SEPARATOR ', ') FROM category JOIN entries_category ON category.category_id = entries_category.category_id_fk WHERE entries_category.entries_id_fk = entries.entries_id) AS categories FROM entries WHERE entries.title = %s;", (title,))
-        movie = cursor.fetchone()
-        similar_movies_details.append(movie)
+            f"""
+            SELECT DISTINCT entries.entries_id, entries.date, entries.title,
+            entries.length, entries.overview FROM entries
+            WHERE entries.title IN ({title_placeholders});
+            """, titles)
+        movie = cursor.fetchall()
+        # cursor.fetchall()  # cleans the cursor of unread results
+        # similar_movies_details.append(movie)
 
     cursor.close()
     connection.close()
 
-    return similar_movies_details
+    return movie
 
 
 @api_bp.route("/api/recommendation", methods=['GET'])
