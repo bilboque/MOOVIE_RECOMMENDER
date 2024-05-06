@@ -27,8 +27,7 @@ def getIndex():
 def getMovieDetails(entries_id):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
-    cursor.execute(
-        """
+    query = """
         SELECT
             entries.entries_id,
             entries.date,
@@ -42,7 +41,8 @@ def getMovieDetails(entries_id):
                 AS categories
         FROM entries
         WHERE entries.entries_id = %s;
-        """, (entries_id,))
+        """
+    cursor.execute(query, (entries_id,))
     movie = cursor.fetchone()
     cursor.close()
     connection.close()

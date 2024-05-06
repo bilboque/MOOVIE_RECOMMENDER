@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f9f9f9;
 }
 
 header {
@@ -46,7 +46,7 @@ nav section.new_index div.title {
     padding: 0 10px;
     grid-gap: 10px; 
     border: 1px solid #000; 
-    background-color: #dbd7d2;
+    background-color: #f9f9f9;
 }
 
 .movie {

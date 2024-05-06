@@ -130,7 +130,7 @@ def get_recommendations(movie_list):
             input_metadata.append(title)
 
     input_text = ' '.join(input_metadata)  # Concatenate texts
-    print('input text: ', input_text)
+    # print('input text: ', input_text)
 
     # Transform the concatenated input movie metadata
     input_tfidf = tf_idf.transform([input_text])
@@ -150,6 +150,6 @@ def get_recommendations(movie_list):
     cursor.close()
     connection.close()
 
-    print('output: ', recommended_titles)
+    # print('output: ', recommended_titles)
 
     return recommended_titles
