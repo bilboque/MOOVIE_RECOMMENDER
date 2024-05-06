@@ -31,6 +31,8 @@ def get_recommendations(movie_list):
     # connection to DB
     cursor, connection = db_connect()
 
+    print('movie list: ', movie_list)
+
     # Load-data movies and overview
     metadata_overiew = """
     SELECT entries.entries_id, entries.overview, entries.title

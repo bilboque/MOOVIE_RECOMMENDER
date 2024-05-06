@@ -75,7 +75,8 @@ def getSimilarMovieDetails(titles):
 
 @api_bp.route("/api/recommendation", methods=['GET'])
 def getRecommendations():
-    title = request.headers.get('args')
+    title = []
+    title.append(request.headers.get('args'))
     recommendations = get_recommendations(title)
     return recommendations
 
