@@ -29,18 +29,18 @@ def getMovieDetails(entries_id):
     cursor = connection.cursor(dictionary=True)
     query = """
         SELECT
-            entries.entries_id,
-            entries.date,
-            entries.title,
-            entries.length,
-            entries.universe_id_fk,
-            entries.overview,
-            (SELECT GROUP_CONCAT(category_name SEPARATOR ', ')
-                FROM category JOIN entries_category ON category.category_id = entries_category.category_id_fk
-                WHERE entries_category.entries_id_fk = entries.entries_id)
-                AS categories
-        FROM entries
-        WHERE entries.entries_id = %s;
+            e.entries_id,
+            e.date,
+            e.title,
+            e.length,
+            e.universe_id_fk,
+            e.overview,
+            GROUP_CONCAT(c.category_name SEPARATOR ', ') AS categories
+        FROM entries e
+        LEFT JOIN entries_category ec ON ec.entries_id_fk = e.entries_id
+        LEFT JOIN category c ON c.category_id = ec.category_id_fk
+        WHERE e.entries_id = %s
+        GROUP BY e.entries_id;
         """
     cursor.execute(query, (entries_id,))
     movie = cursor.fetchone()

@@ -5,7 +5,7 @@ from flask import (render_template,
 from api_routes import (getIndex, searchEntry,
                         getMovieDetails, view_watchlist, api_add_to_watchlist,
                         api_remove_from_watchlist, getCategories,
-                        get_specific_category, getSimilarMovieDetails)
+                        get_specific_category, getSimilarMovieDetails, getRecommendations)
 import requests
 import json
 
@@ -38,6 +38,7 @@ def advanced_search():
                                headers={"args": query})
         advancedSearch = advance.text
         result = getSimilarMovieDetails(json.loads(advancedSearch))
+        print(result)
     else:
         print("nothing found in advanced search")
         result = []
@@ -48,13 +49,17 @@ def advanced_search():
 def movieDetails(entries_id):
     details = getMovieDetails(entries_id)
 
+    # get movie recommendations
+    # similar = getRecommendations(details['title'])
     similarMovies = requests.get(
         "http://127.0.0.1:5000/api/recommendation",
         headers={"args": details['title']})  # this returns a byte string
 
     similarContent = similarMovies.text
     similar = json.loads(similarContent)  # parses string as list
+
     similarMovieDetails = getSimilarMovieDetails(similar)
+    # print(similarMovieDetails)
 
     return render_template('movie_details.html', output=details,
                            output2=similarMovieDetails)
@@ -63,7 +68,21 @@ def movieDetails(entries_id):
 @routes_bp.route('/watchlist', methods=['GET'])
 def viewWatchlist():
     watchlist = view_watchlist()
-    return render_template('watchlist.html', output=watchlist)
+    movies = []
+    for movie in watchlist:
+        movies.append(movie['title'])
+
+    movie_titles = ', '.join(movies)
+    similarMovies = requests.get(
+        "http://127.0.0.1:5000/api/recommendation",
+        headers={"args": movie_titles})  # this returns a byte string
+
+    similarContent = similarMovies.text
+    similar = json.loads(similarContent)  # parses string as list
+
+    similarMovieDetails = getSimilarMovieDetails(similar)
+
+    return render_template('watchlist.html', output=watchlist, output2=similarMovieDetails)
 
 
 @routes_bp.route('/add/<int:entries_id>', methods=['POST'])

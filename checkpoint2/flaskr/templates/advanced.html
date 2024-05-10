@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyMovieDB</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='advanced.css') }}">
 </head>
 <body>
     <header>
@@ -28,36 +28,31 @@
         </div>
         <a href="/advancedsearch">Advanced Search</a>
     </nav>
-    <div class="container full-width">
-        <div class="advanced-search">
-            <h2>Advanced Search</h2>
-            <form action="/advancedsearch" method="GET">
-                <input type="text" name="query" placeholder="Enter a movie description...">
-                <input type="submit" value="Search">
-            </form>
-        </div>
-        <div class="search-results">
-            {% if search_results %}
-                <h3>Search Results</h3>
-                {% for movie in search_results %}
-                    <a href="/movie/{{ movie.entries_id }}" class="details-link">
-                        <div class="movie">
-                            <h3>{{ movie.title }}</h3>
-                            <p>{{ movie.date }}</p>
-                            <p><strong>Overview</strong></p>
-                            <p>{{ movie.overview }}</p>
-                            <form action="/add/{{ movie.entries_id }}" method="POST">
-                                <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                                <button type="submit">Add to Watchlist</button>
-                            </form>
-                        </div>
-                    </a>
-                {% endfor %}
-            {% else %}
-                <p>No results found.</p>
-            {% endif %}
-        </div>
+
+    <div class="advanced-search">
+        <h2>Advanced Search</h2>
+        <form action="/advancedsearch" method="GET">
+            <input type="text" name="query" placeholder="Enter a movie description...">
+            <input type="submit" value="Search">
+        </form>
     </div>
+    <div class="container full-width">
+        {% for movie in output %}
+        <a href="/movie/{{ movie.entries_id }}" class="details-link">
+            <div class="movie">
+                <h3>{{ movie.title }}</h3>
+                <p>{{ movie.date }}</p>
+                <p><strong>Overview</strong></p>
+                <p>{{ movie.overview }}</p>
+                <form action="/add/{{ movie.entries_id }}" method="POST">
+                    <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
+                    <button type="submit">Add to Watchlist</button>
+                </form>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
 </body>
 </html>
 
