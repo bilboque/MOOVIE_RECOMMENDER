@@ -193,3 +193,20 @@ def get_specific_category(category):
     connection.close()
 
     return categories
+
+
+@api_bp.route('/api/review/<int:entries_id>', methods=['POST'])
+def api_review(user_id, entries_id, comment):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+        INSERT INTO review (entries_id_fk, body, user_id_fk)
+        VALUES (%s, %s, %s);
+        """, (entries_id, comment, user_id)
+
+    cursor.execute(query)
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return jsonify({'success': True, 'message': 'Review added to movie'}), 200
