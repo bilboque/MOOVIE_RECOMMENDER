@@ -18,3 +18,8 @@ affiche les films avec la recherche grace a la route de l'API
 ## DEPUIS LA WATCHLIST
 
 Plusieurs films dans la route de l'API et afficher les resutats
+
+## MORE TODO
+configure CI/CD
+work on review functionality
+work on rating functionality
