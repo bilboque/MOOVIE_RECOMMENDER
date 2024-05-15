@@ -87,7 +87,8 @@ def viewWatchlist():
     return render_template('watchlist.html', output=watchlist, output2=similarMovieDetails)
 
 
-@routes_bp.route('/add/<int:entries_id>')  # add movie to watchlist
+# add movie to watchlist
+@routes_bp.route('/add/<int:entries_id>', methods=['POST'])
 def add_to_watchlist(entries_id):
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
@@ -99,7 +100,8 @@ def add_to_watchlist(entries_id):
     return render_template('app.html', output=output)
 
 
-@routes_bp.route('/remove/<int:entries_id>')  # remove movie from watchlist
+# remove movie from watchlist
+@routes_bp.route('/remove/<int:entries_id>', methods=['POST'])
 def remove_from_watchlist(entries_id):
     user_id = session['user_id']
     api_remove_from_watchlist(user_id, entries_id)
@@ -119,14 +121,17 @@ def specific_category():
     return render_template('categories.html', output=output)
 
 
-@routes_bp.route('/review/<int:entries_id>')  # add review to movie
+# add review to movie
+@routes_bp.route('/review/<int:entries_id>', methods=['POST'])
 def review(entries_id):
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
 
     user_id = session['user_id']
-    query = request.args.get('query')
-    api_review(user_id, entries_id, query)
+    query = request.form.get('query')
+    print("review query: ", query)
+    print(api_review(user_id, entries_id, query))
+    return
 
 
 @routes_bp.route('/rate/<int:entries_id>')  # rate movies

@@ -151,7 +151,7 @@ def api_remove_from_watchlist(user_id, entries_id):
 
     try:
         cursor.execute(
-            "DELETE FROM watchlist WHERE user_id_fk = %s AND entries_id_fk = %s",
+            "DELETE FROM watchlist WHERE user_id_fk = %s AND entries_id_fk = %s;",
             (user_id, entries_id))
         connection.commit()
         cursor.close()
@@ -186,7 +186,7 @@ def get_specific_category(category):
                     FROM entries
                     JOIN entries_category ON entries.entries_id = entries_category.entries_id_fk
                     JOIN category ON entries_category.category_id_fk = category.category_id
-                    WHERE category.category_name = %s
+                    WHERE category.category_name = %s;
                     """, (category,))
     categories = cursor.fetchall()
     cursor.close()
@@ -201,11 +201,12 @@ def api_review(user_id, entries_id, comment):
     cursor = connection.cursor(dictionary=True)
 
     query = """
-        INSERT INTO review (entries_id_fk, body, user_id_fk)
-        VALUES (%s, %s, %s);
-        """, (entries_id, comment, user_id)
+        INSERT INTO review (entries_id_fk, body, user_id_fk, rating)
+        VALUES (%s, %s, %s, %s);
+        """
+    values = (entries_id, comment, user_id, int(-1))
 
-    cursor.execute(query)
+    cursor.execute(query, values)
     connection.commit()
     cursor.close()
     connection.close()

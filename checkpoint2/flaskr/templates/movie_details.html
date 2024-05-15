@@ -40,10 +40,10 @@
             </form>
         </div>
         <div class='review half-width'>
-            <form action="/review/{{ output.entries_id }}" method="POST">
-                    <input type="text" name="entries_id" value="Add review..." style="width: 300px; height: 40px;">
-                    <button type="submit">Post</button>
-                </form>
+            <form action="/review/{{ output.entries_id }}" method="POST" accept-charset='utf-8'>
+                <input type="text" name="query" placeholder="Add review..." style="width: 300px; height: 40px;">
+                <input type="submit" value="Post">
+            </form>
             {% for review in reviews %}
             <p>{{ review.body }}</p>
             {% endfor %}
