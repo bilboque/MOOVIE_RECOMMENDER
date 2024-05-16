@@ -61,6 +61,7 @@ def movieDetails(entries_id):
     similar = json.loads(similarContent)  # parses string as list
 
     similarMovieDetails = getSimilarMovieDetails(similar)
+    reviews = get_review(entries_id)
     # print(similarMovieDetails)
 
     return render_template('movie_details.html', output=details,
@@ -131,7 +132,7 @@ def review(entries_id):
     query = request.form.get('query')
     print("review query: ", query)
     print(api_review(user_id, entries_id, query))
-    return
+    return render_template('movie_details.html', )
 
 
 @routes_bp.route('/rate/<int:entries_id>')  # rate movies
