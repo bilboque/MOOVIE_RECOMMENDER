@@ -13,7 +13,7 @@ import json
 routes_bp = Blueprint('routes', __name__)
 
 
-@routes_bp.route("/")
+@routes_bp.route("/", methods=['GET'])
 def index():
     output = getIndex()
     return render_template('app.html', output=output)
@@ -24,14 +24,15 @@ def about():
     return "<h3>This is an IMDb project; codename DBMi</h3>"
 
 
-@routes_bp.route("/search")  # perform a normal search
+@routes_bp.route("/search", methods=['GET'])  # perform a normal search
 def search():
     query = request.args.get('query')
     search = searchEntry(query)
     return render_template('app.html', output=search)
 
 
-@routes_bp.route("/advancedsearch")  # perform an advanced search
+# perform an advanced search
+@routes_bp.route("/advancedsearch", methods=['GET'])
 def advanced_search():
     query = request.args.get('query')
     if query:
@@ -47,12 +48,15 @@ def advanced_search():
 
 
 # display further information on a movie
-@routes_bp.route('/movie/<int:entries_id>')
+@routes_bp.route('/movie/<int:entries_id>', methods=['GET'])
 def movieDetails(entries_id):
-    details = getMovieDetails(entries_id)
+    details, reviews = getMovieDetails(entries_id)
+
+    # Ensure `details` is not None
+    if not details:
+        return "Movie not found", 404
 
     # get movie recommendations
-    # similar = getRecommendations(details['title'])
     similarMovies = requests.get(
         "http://127.0.0.1:5000/api/recommendation",
         headers={"args": details['title']})  # this returns a byte string
@@ -61,14 +65,12 @@ def movieDetails(entries_id):
     similar = json.loads(similarContent)  # parses string as list
 
     similarMovieDetails = getSimilarMovieDetails(similar)
-    reviews = get_review(entries_id)
-    # print(similarMovieDetails)
 
-    return render_template('movie_details.html', output=details,
-                           output2=similarMovieDetails)
+    return render_template('movie_details.html', details=details,
+                           similar_movies=similarMovieDetails, reviews=reviews)
 
 
-@routes_bp.route('/watchlist')  # display watchlist
+@routes_bp.route('/watchlist', methods=['GET'])  # display watchlist
 def viewWatchlist():
     watchlist = view_watchlist()
     movies = []
@@ -85,7 +87,8 @@ def viewWatchlist():
 
     similarMovieDetails = getSimilarMovieDetails(similar)
 
-    return render_template('watchlist.html', output=watchlist, output2=similarMovieDetails)
+    return render_template('watchlist.html', output=watchlist,
+                           output2=similarMovieDetails)
 
 
 # add movie to watchlist
@@ -131,8 +134,9 @@ def review(entries_id):
     user_id = session['user_id']
     query = request.form.get('query')
     print("review query: ", query)
-    print(api_review(user_id, entries_id, query))
-    return render_template('movie_details.html', )
+    api_review(user_id, entries_id, query)
+    # -> go to moviedetails function and use the render_template there
+    return redirect(url_for('routes_bp.movieDetails', entries_id=entries_id))
 
 
 @routes_bp.route('/rate/<int:entries_id>')  # rate movies

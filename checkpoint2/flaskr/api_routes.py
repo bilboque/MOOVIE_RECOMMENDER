@@ -4,6 +4,7 @@ from db import get_db_connection
 import auth
 from algo import get_recommendations
 import json
+import datetime
 
 api_bp = Blueprint('api_routes', __name__)
 
@@ -27,6 +28,7 @@ def getIndex():
 def getMovieDetails(entries_id):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
+
     query = """
         SELECT
             e.entries_id,
@@ -44,11 +46,25 @@ def getMovieDetails(entries_id):
         """
     cursor.execute(query, (entries_id,))
     movie = cursor.fetchone()
+
+    # Query to fetch reviews for the movie
+    reviews_query = """
+        SELECT
+            r.body,
+            r.creation_date
+        FROM review r
+        WHERE r.entries_id_fk = %s;
+        """
+    cursor.execute(reviews_query, (entries_id,))
+    reviews = cursor.fetchall()
+
     cursor.close()
     connection.close()
-    return movie
+
+    return movie, reviews
 
 
+@api_bp.route('/api/similarmovie/<int:entries_id>/', methods=['GET'])
 def getSimilarMovieDetails(titles):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
@@ -200,11 +216,13 @@ def api_review(user_id, entries_id, comment):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
+    current_timestamp = datetime.datetime.now()
+
     query = """
-        INSERT INTO review (entries_id_fk, body, user_id_fk, rating)
-        VALUES (%s, %s, %s, %s);
+        INSERT INTO review (entries_id_fk, body, user_id_fk, rating, creation_date)
+        VALUES (%s, %s, %s, %s, %s);
         """
-    values = (entries_id, comment, user_id, int(-1))
+    values = (entries_id, comment, user_id, int(-1), current_timestamp)
 
     cursor.execute(query, values)
     connection.commit()
