@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.metrics.pairwise import euclidean_distances
 import mysql.connector
+from flask import current_app
 
 
 def read_db_password():
@@ -24,6 +25,14 @@ def db_connect():
     )
 
     return connection.cursor(), connection
+
+
+# cache = current_app.extensions['cache']  # Access the cache instance
+
+
+# @cache.cached(timeout=60, key_prefix='tfidf_computation')
+# def get_tfidf():
+#    return TfidfVectorizer(stop_words='english', strip_accents='ascii')
 
 
 # Function that takes in movie title as input and outputs most similar movies
@@ -117,6 +126,7 @@ def get_recommendations(movie_list):
 
     # Initialize the TF-IDF Vectorizer
     tf_idf = TfidfVectorizer(stop_words='english', strip_accents='ascii')
+    # tf_idf = get_tfidf()
 
     # Fit and transform the overviews to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
