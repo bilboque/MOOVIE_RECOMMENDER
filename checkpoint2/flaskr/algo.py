@@ -123,18 +123,29 @@ def get_tfidf_matrix():
 
     # Fit and transform the aggregated metadata to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
-    return tf_idf, tfidf_matrix, titles
+    return tf_idf, tfidf_matrix, titles, metadata
 
 
 # Function that takes in movie title as input and outputs most similar movies
 def get_recommendations(movie_list):
-    tf_idf, tfidf_matrix, titles = get_tfidf_matrix()
+    tf_idf, tfidf_matrix, titles, metadata = get_tfidf_matrix()
 
     # Concatenate the overviews of the input movies
     input_metadata = []
     for title in movie_list:
         if title in titles:
-            input_metadata.append(titles.index(title))
+            actors_string = (
+                ' '.join(metadata[title]['actors']) + ' ') * 2
+            genres_string = (
+                ' '.join(metadata[title]['genres']) + ' ') * 2
+            overview = (metadata[title]['overview'] + ' ') * 1
+            keywords = (
+                ' '.join(metadata[title]['keywords']) + ' ') * 5
+
+            combined_text = overview + ' ' + actors_string + \
+                ' ' + genres_string + ' ' + title + ' ' + keywords
+            input_metadata.append(combined_text)
+
         else:
             input_metadata.append(title)
 
