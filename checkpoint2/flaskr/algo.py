@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.metrics.pairwise import euclidean_distances
 import mysql.connector
-from flask import current_app
+# from temp_app import cache
 
 
 def read_db_password():
@@ -27,10 +27,10 @@ def db_connect():
     return connection.cursor(), connection
 
 
-cache = current_app.extensions['cache']  # Access the cache instance
+# cache = current_app.extensions['cache']  # Access the cache instance
 
 
-@cache.cached(timeout=60, key_prefix='tfidf_computation')
+# @cache.cached(key_prefix='tfidf_computation')
 def get_tfidf(movie_list):
     # connection to DB
     cursor, connection = db_connect()
@@ -219,7 +219,7 @@ def get_recommendations(movie_list):
 
     # Initialize the TF-IDF Vectorizer
     tf_idf = TfidfVectorizer(stop_words='english', strip_accents='ascii')
-    # tf_idf = get_tfidf()
+    # tfidf_matrix = get_tfidf()
 
     # Fit and transform the overviews to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
