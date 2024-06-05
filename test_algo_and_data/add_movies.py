@@ -1,5 +1,6 @@
 import tmdbsimple as tmdb
 import mysql.connector
+from datetime import datetime
 
 
 # ajoute un film
@@ -211,6 +212,22 @@ def add_keywords(cursor, keywords: list, movie_id):
     return
 
 
+def add_rewiews(cursor, reviews, movie_id):
+    insert_review = """
+    INSERT INTO review (entries_id_fk, rating, creation_date, body, user_id_fk)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    for review in reviews:
+        cursor.execute(insert_review,
+                       (movie_id,
+                        review['author_details']['rating'],
+                        current_time,
+                        review['content'],
+                        1000))
+    return
+
+
 # connection to DB
 connection = mysql.connector.connect(
     host="localhost",
@@ -265,6 +282,18 @@ movies = tmdb.Movies()
 #                           cast=resp['cast'], crew=resp['crew'])
 
 # Wrapper request pour récupérer tout les keywords
+# cursor.execute("SELECT entries_id FROM entries")
+# movie_ids = cursor.fetchall()
+#
+# movie_ids.sort()
+#
+# for (movie_id,) in movie_ids:
+#     movie = tmdb.Movies(movie_id)
+#     resp = movie.keywords()
+#     add_keywords(cursor, resp['keywords'], movie_id)
+
+
+# Wrapper request pour recuperer des reviews
 cursor.execute("SELECT entries_id FROM entries")
 movie_ids = cursor.fetchall()
 
@@ -272,8 +301,10 @@ movie_ids.sort()
 
 for (movie_id,) in movie_ids:
     movie = tmdb.Movies(movie_id)
-    resp = movie.keywords()
-    add_keywords(cursor, resp['keywords'], movie_id)
+    resp = movie.reviews()
+    add_rewiews(cursor, resp['results'], movie_id)
+    print(f"{len(resp['results'])} reviews added for moovie {movie_id}")
+
 
 # commit les changements
 connection.commit()
