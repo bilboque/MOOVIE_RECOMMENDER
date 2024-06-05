@@ -20,7 +20,7 @@ def get_db_connection():
         port=3306,
         user="root",
         password=read_db_password(),
-        database="DBMi"  # db name to access
+        database="IMDb"  # db name to access
     )
     return connection
 

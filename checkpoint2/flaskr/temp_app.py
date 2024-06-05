@@ -3,21 +3,11 @@ from auth import auth_bp
 from db import db_blueprint
 from routes import routes_bp
 from api_routes import api_bp
-from flask_caching import Cache
-
-cache = Cache()
-
-config = {
-    "DEBUG": True,
-    "CACHE_TYPE": "SimpleCache",
-}
 
 temp_app = Flask(__name__)
 
 
 # tell Flask to use the above defined config
-temp_app.config.from_mapping(config)
-cache.init_app(temp_app)
 
 temp_app.register_blueprint(auth_bp)
 temp_app.register_blueprint(db_blueprint)
