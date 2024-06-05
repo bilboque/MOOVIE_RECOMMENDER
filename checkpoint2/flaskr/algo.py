@@ -28,9 +28,6 @@ def db_connect():
     return connection.cursor(), connection
 
 
-cache = current_app.extensions['cache']  # Access the cache instance
-
-
 @functools.lru_cache(maxsize=1)
 def fetch_metadata():
     cursor, connection = db_connect()
