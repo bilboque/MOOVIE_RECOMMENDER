@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import mysql.connector
+import functools
 
 import mplcursors
 import matplotlib
@@ -10,6 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.lines as mlines
 from sklearn.metrics.pairwise import euclidean_distances
 import itertools
+import numpy as np
 
 
 def plot_tsne_with_genres(tfidf_matrix, titles, meta_data):
@@ -77,17 +79,16 @@ def db_connect():
     return connection.cursor(), connection
 
 
-# Function that takes in movie title as input and outputs most similar movies
-def get_recommendations(movie_list):
-    # connection to DB
+@functools.lru_cache(maxsize=1)
+def fetch_metadata():
     cursor, connection = db_connect()
 
-    # Load-data movies and overview
-    metadata_overiew = """
+    # Load movies and overviews
+    metadata_overview = """
     SELECT entries.entries_id, entries.overview, entries.title
     FROM entries
     """
-    cursor.execute(metadata_overiew)
+    cursor.execute(metadata_overview)
     results = cursor.fetchall()
 
     titles = []
@@ -95,12 +96,10 @@ def get_recommendations(movie_list):
 
     for _, overview, title in results:
         metadata[title] = {'overview': overview,
-                           'actors': [],
-                           'genres': [],
-                           'keywords': []}
+                           'actors': [], 'genres': [], 'keywords': []}
         titles.append(title)
 
-    # now fetch actors
+    # Fetch actors
     metadata_actors = """
     SELECT title, people.name
     FROM entries, role, people
@@ -109,11 +108,10 @@ def get_recommendations(movie_list):
     """
     cursor.execute(metadata_actors)
     results = cursor.fetchall()
-
     for title, name in results:
         metadata[title]['actors'].append(name)
 
-    # now fetch genres
+    # Fetch genres
     metadata_genres = """
     SELECT title, category_name
     FROM entries, entries_category, category
@@ -122,43 +120,47 @@ def get_recommendations(movie_list):
     """
     cursor.execute(metadata_genres)
     results = cursor.fetchall()
-
     for title, genre in results:
         metadata[title]['genres'].append(genre)
 
-    # now fetch keywords
-    metadata_genres = """
-    select entries.title, keywords.keywords
-    from entries, entries_keywords, keywords
-    where entries.entries_id = entries_keywords.entries_id_fk
-        and entries_keywords.keywords_id_fk = keywords.keywords_id
+    # Fetch keywords
+    metadata_keywords = """
+    SELECT entries.title, keywords.keywords
+    FROM entries, entries_keywords, keywords
+    WHERE entries.entries_id = entries_keywords.entries_id_fk
+        AND entries_keywords.keywords_id_fk = keywords.keywords_id
     """
-    cursor.execute(metadata_genres)
+    cursor.execute(metadata_keywords)
     results = cursor.fetchall()
-
     for title, keyword in results:
         metadata[title]['keywords'].append(keyword)
 
-    # default weights
-    keywords_wght = 5
+    cursor.close()
+    connection.close()
+
+    return titles, metadata
+
+
+@functools.lru_cache(maxsize=1)
+def get_tfidf_matrix():
+    titles, metadata = fetch_metadata()
+
+    # Assign weights
+    keywords_weight = 5
     genres_weight = 2
     actors_weight = 2
-    overview_wght = 1
+    overview_weight = 1
 
-    if not set(movie_list).issubset(set(titles)):
-        overview_wght = 4
-        keywords_wght = 4
-
-    # Création des métadonnées finales après agrégation
+    # Aggregate metadata
     final_metadata = []
     for title in titles:
         actors_string = (
             ' '.join(metadata[title]['actors']) + ' ') * actors_weight
         genres_string = (
             ' '.join(metadata[title]['genres']) + ' ') * genres_weight
-        overview = ((metadata[title]['overview']) + ' ') * overview_wght
+        overview = (metadata[title]['overview'] + ' ') * overview_weight
         keywords = (
-            ' '.join(metadata[title]['keywords']) + ' ') * keywords_wght
+            ' '.join(metadata[title]['keywords']) + ' ') * keywords_weight
 
         combined_text = overview + ' ' + actors_string + \
             ' ' + genres_string + ' ' + title + ' ' + keywords
@@ -167,37 +169,70 @@ def get_recommendations(movie_list):
     # Initialize the TF-IDF Vectorizer
     tf_idf = TfidfVectorizer(stop_words='english', strip_accents='ascii')
 
-    # Fit and transform the overviews to TF-IDF
+    # Fit and transform the aggregated metadata to TF-IDF
     tfidf_matrix = tf_idf.fit_transform(final_metadata)
-    # plot_tsne_with_genres(tfidf_matrix, titles, metadata)
+    return tf_idf, tfidf_matrix, titles, metadata
+
+
+# Function that takes in movie title as input and outputs most similar movies
+def get_recommendations(movie_list):
+    tf_idf, tfidf_matrix, titles, metadata = get_tfidf_matrix()
 
     # Concatenate the overviews of the input movies
     input_metadata = []
     for title in movie_list:
         if title in titles:
-            input_metadata.append(final_metadata[titles.index(title)])
+            actors_string = (
+                ' '.join(metadata[title]['actors']) + ' ') * 2
+            genres_string = (
+                ' '.join(metadata[title]['genres']) + ' ') * 2
+            overview = (metadata[title]['overview'] + ' ') * 1
+            keywords = (
+                ' '.join(metadata[title]['keywords']) + ' ') * 5
+
+            combined_text = overview + ' ' + actors_string + \
+                ' ' + genres_string + ' ' + title + ' ' + keywords
+            input_metadata.append(combined_text)
+
         else:
             input_metadata.append(title)
 
-    input_text = ' '.join(input_metadata)  # Concatenate texts
-    print(input_text)
+    input_text = ' '.join(input_metadata)
 
     # Transform the concatenated input movie metadata
     input_tfidf = tf_idf.transform([input_text])
 
     # Compute cosine similarities between input movies and database entries
-    # dist = 1 - linear_kernel(input_tfidf, tfidf_matrix).flatten()
-    # Calculate Euclidean distances
     dist = euclidean_distances(input_tfidf, tfidf_matrix).flatten()
 
     # Get top 10 similar movies
     top_indices = dist.argsort()[::]
     top_indices = [i for i in top_indices if titles[i] not in movie_list][:10]
 
-    # Print or return the titles of the top recommendations
     recommended_titles = [titles[i] for i in top_indices]
 
-    cursor.close()
-    connection.close()
-
     return recommended_titles
+
+
+def get_top_keywords(film, top_n):
+    tf_idf, tfidf_matrix, titles, metadata = get_tfidf_matrix()
+
+    if film not in titles:
+        return f"The film '{film}' is not in the list of titles."
+
+    film_idx = titles.index(film)
+    feature_names = tf_idf.get_feature_names_out()
+    tfidf_scores = tfidf_matrix[film_idx].toarray().flatten()
+    top_indices = np.argsort(tfidf_scores)[::-1][:top_n]
+    top_keywords = [feature_names[i]
+                    for i in top_indices if tfidf_scores[i] > 0]
+
+    return top_keywords
+
+
+def get_watchlist_keywords(watchlist):
+    all_keywords = []
+    for film in watchlist:
+        all_keywords.extend(get_top_keywords(film, 2))
+
+    return all_keywords
