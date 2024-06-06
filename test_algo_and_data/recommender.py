@@ -10,7 +10,6 @@ from sklearn.manifold import TSNE
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.lines as mlines
 from sklearn.metrics.pairwise import euclidean_distances
-import itertools
 import numpy as np
 
 
@@ -236,3 +235,46 @@ def get_watchlist_keywords(watchlist):
         all_keywords.extend(get_top_keywords(film, 2))
 
     return all_keywords
+
+
+# Methode 1 - pas dingue
+def get_watchlist_recommendation(watchlist):
+    moovies = get_recommendations(get_watchlist_keywords(watchlist))
+    return [moovie for moovie in moovies if moovie not in watchlist]
+
+
+def get_watchlist_recommendation2(watchlist):
+    titles, metadata = fetch_metadata()
+
+    input_metadata = []
+    for title in watchlist:
+        if title in titles:
+            actors_string = (
+                ' '.join(metadata[title]['actors']) + ' ') * 2
+            genres_string = (
+                ' '.join(metadata[title]['genres']) + ' ') * 2
+            overview = (metadata[title]['overview'] + ' ') * 1
+            keywords = (
+                ' '.join(metadata[title]['keywords']) + ' ') * 5
+
+            combined_text = overview + ' ' + actors_string + \
+                ' ' + genres_string + ' ' + title + ' ' + keywords
+            input_metadata.append(combined_text)
+        else:
+            input_metadata.append(title)  # foolproof
+
+    tf_idf = TfidfVectorizer(stop_words='english', strip_accents='ascii')
+
+    tfidf_matrix = tf_idf.fit_transform(input_metadata)
+
+    summed_tfidf = np.sum(tfidf_matrix, axis=0)
+    summed_tfidf_array = np.asarray(summed_tfidf).flatten()
+
+    feature_names = tf_idf.get_feature_names_out()
+
+    top_indices = np.argsort(summed_tfidf_array)[::-1][:10]
+
+    top_keywords = [feature_names[i] for i in top_indices]
+    print(top_keywords)
+
+    return get_recommendations(top_keywords)
