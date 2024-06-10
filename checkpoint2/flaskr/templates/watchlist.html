@@ -25,42 +25,29 @@
                 <input type="submit" value="Search">
             </form>
         </div>
+        <a href="/advancedsearch">Advanced Search</a>
     </nav>
     <div class="container full-width watchlist">
         {% if output %}
             {% for movie in output %}
-            <div class="movie">
-                <h3>{{ movie.title }}</h3>
-                <p>Release Year: {{ movie.date }}</p>
-                <p class="overview"><strong>Overview:</strong> 
-                    <li>{{ movie.overview }}</li>
-                </p>
-                <form action="/remove/{{ movie.entries_id }}" method="POST">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                    <button type="submit">Remove from Watchlist</button>
-                </form>
-            </div>
+            <a href="/movie/{{ movie.entries_id }}" class="details-link">
+                <div class="movie">
+                    <h3>{{ movie.title }}</h3>
+                    <p>Release Year: {{ movie.date }}</p>
+                    <p class="overview"><strong>Overview:</strong> 
+                        <li>{{ movie.overview }}</li>
+                    </p>
+                    <form action="/remove/{{ movie.entries_id }}" method="POST">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
+                        <button type="submit">Remove from Watchlist</button>
+                    </form>
+                </div>
+            </a>
             {% endfor %}
         {% else %}
             <p>Your watchlist is empty.</p>
         {% endif %}
-    </div>
-    <div class="container full-width">
-        {% for movie in output %}
-        <a href="/movie/{{ movie.entries_id }}" class="details-link">
-            <div class="movie">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.date }}</p>
-                <p><strong>Overview</strong></p>
-                <p>{{ movie.overview }}</p>
-                <form action="/add/{{ movie.entries_id }}" method="POST">
-                    <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                    <button type="submit">Add to Watchlist</button>
-                </form>
-            </div>
-        </a>
-        {% endfor %}
     </div>
 </body>
 </html>

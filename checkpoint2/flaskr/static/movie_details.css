@@ -33,6 +33,11 @@ nav .search-container {
     display: inline-block;
 }
 
+.details-link{
+    text-decoration: none; 
+    color: inherit;
+}
+
 .container {
     display: flex;
     width: 100%;

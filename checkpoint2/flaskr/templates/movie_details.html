@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyMovieDB</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='movie_details.css') }}">
 </head>
 <body>
     <header>
@@ -25,6 +25,7 @@
                 <input type="submit" value="Search">
             </form>
         </div>
+        <a href="/advancedsearch">Advanced Search</a>
     </nav>
     <div class="container full-width">
         <div class="movie half-width">
@@ -34,7 +35,7 @@
             <p>{{ details.overview }}</p>
             <p>Length: {{ details.length }}</p>
             <p>{{ details.date }}</p>
-            <form action="/add" method="POST">
+            <form action="/add/{{ details.entries_id }}" method="POST">
                 <input type="hidden" name="entries_id" value="{{ details.entries_id }}">
                 <button type="submit">Add to Watchlist</button>
             </form>
