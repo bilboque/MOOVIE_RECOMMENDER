@@ -6,11 +6,11 @@ body {
 }
 
 header {
-    background-color: #1a237e; 
-    color: #fff; 
+    background-color: #1a237e;
+    color: #fff;
     padding: 10px;
     text-align: center;
-    background-image: url('purple_flames.png'); 
+    background-image: url('purple_flames.png');
     background-size: cover;
     background-position: center;
 }
@@ -22,42 +22,43 @@ nav {
 }
 
 nav a {
-    color: #FCF7F8; 
+    color: #FCF7F8;
     text-decoration: none;
     margin: 0 10px;
     display: inline-block;
 }
 
-nav .search-container{
-    margin-left: auto; 
+nav .search-container {
+    margin-left: auto;
     display: inline-block;
 }
 
 .container {
-    display: flex; /* Use flexbox to align divs side by side */
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 10px; /* Optional: Add padding to the container*/
+    max-height: calc(100vh - 60px - 40px); /* Full height minus header and nav heights */
+}
+
+.container.full-width {
+    max-width: none;
+    margin: 0;
+    padding: 0;
 }
 
 .movie, .review {
-    flex: 1; /* Each div takes up equal space */
-}
-
-.half-width {
-    width: 50%; /* Each div takes up half of the container's width */
+    flex: 1;
+    margin: 10px; /* Optional: Add margin to separate the columns */
 }
 
 .movie {
     background-color: #fff;
-    border-radius: 5px; /* Rounded corners */
+    border-radius: 5px;
     padding: 10px;
-    margin-bottom: 20px;
     background-color: #dbd7d2;
 }
-
-/*.movie img {
-    max-width: 100px;
-    float: left;
-    margin-right: 20px;
-}*/
 
 .movie h3 {
     margin-top: 0;
@@ -67,11 +68,23 @@ nav .search-container{
     margin: 5px 0;
 }
 
-/*.movie.full-width {
-    max-width: none;
-    margin: 0;
-    padding: 0;
-}*/
+.review {
+    background-color: #fff;
+    border-radius: 5px;
+    width: 100% - .movie.width;
+    padding: 10px;
+    background-color: #dbd7d2;
+    max-height: 500px; /* Set a maximum height for the review container */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.review form {
+    margin-bottom: 20px; /* Space between form and reviews */
+}
+
+.review p {
+    margin: 5px 0;
+}
 
 .recommendations {
     background-color: #f3f3f3;
@@ -90,3 +103,4 @@ nav .search-container{
 .recommendations li {
     margin-bottom: 10px;
 }
+
