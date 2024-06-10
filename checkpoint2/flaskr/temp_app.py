@@ -3,6 +3,7 @@ from auth import auth_bp
 from db import db_blueprint
 from routes import routes_bp
 from api_routes import api_bp
+from algo import algo_bp
 
 
 def create_app():
@@ -11,6 +12,7 @@ def create_app():
     temp_app.register_blueprint(db_blueprint)
     temp_app.register_blueprint(routes_bp)
     temp_app.register_blueprint(api_bp)
+    temp_app.register_blueprint(algo_bp)
     return temp_app
 
 

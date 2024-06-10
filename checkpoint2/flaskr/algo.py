@@ -4,6 +4,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.metrics.pairwise import euclidean_distances
 import mysql.connector
+from flask import Blueprint
+
+algo_bp = Blueprint('algo', __name__)
 
 
 def read_db_password():
