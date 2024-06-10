@@ -1,5 +1,5 @@
 import pytest
-from temp_app import create_app
+from flaskr.temp_app import create_app
 
 
 @pytest.fixture
