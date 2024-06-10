@@ -13,6 +13,7 @@ def create_app():
     temp_app.register_blueprint(routes_bp)
     temp_app.register_blueprint(api_bp)
     temp_app.register_blueprint(algo_bp)
+    temp_app.secret_key = get_session_key()  # secret key for session management
     return temp_app
 
 
@@ -27,5 +28,4 @@ def get_session_key():
 
 if __name__ == '__main__':
     temp_app = create_app()
-    temp_app.secret_key = get_session_key()  # secret key for session management
     temp_app.run(debug=True)
