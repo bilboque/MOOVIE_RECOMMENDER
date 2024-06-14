@@ -20,15 +20,15 @@ before_script:
 
 build:
   script:
-    - pip install requirements.txt
-    - flask --app app run
+    - pip install -r requirements.txt # install requirements
+    - flask --app app run # run flask app
   artifacts:
     paths:
       - .cache/pip
 
 test:    # It only starts when the job in the build stage completes successfully.
   script:
-    - pytest
+    - pytest # run tests using pytest
 
 deploy:  # It only runs when *both* jobs in the test stage complete successfully.
   environment: production
