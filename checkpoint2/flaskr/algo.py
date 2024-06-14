@@ -5,35 +5,15 @@ from sklearn.metrics.pairwise import linear_kernel
 from sklearn.metrics.pairwise import euclidean_distances
 import mysql.connector
 from flask import Blueprint
+from db import get_db_connection
 
 algo_bp = Blueprint('algo', __name__)
 
 
-def read_db_password():
-    try:
-        with open('password.txt', 'r') as file:
-            password = file.readline().strip()  # Assuming password is stored in a single line
-        return password
-    except FileNotFoundError:
-        return None
-
-
-def db_connect():
-    # create db connection
-    connection = mysql.connector.connect(
-        host="db",
-        port=3306,
-        user="g14",
-        password=read_db_password(),
-        database="g14"  # db name to access
-    )
-
-    return connection.cursor(), connection
-
-
 @functools.lru_cache(maxsize=1)
 def fetch_metadata():
-    cursor, connection = db_connect()
+    connection = get_db_connection()
+    cursor = connection.cursor()
 
     # Load movies and overviews
     metadata_overview = """
@@ -164,3 +144,11 @@ def get_recommendations(movie_list):
     recommended_titles = [titles[i] for i in top_indices]
 
     return recommended_titles
+
+
+def average_rating(ratings):
+    valid_ratings = [
+        rating for rating in ratings if rating is not None and 1 <= rating <= 10]
+    if not valid_ratings:
+        return "N/A"
+    return sum(valid_ratings) / len(valid_ratings)

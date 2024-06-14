@@ -5,15 +5,14 @@ WORKDIR /DBMi-flask
 
 # Copy the necessary files and directories into the container
 COPY ./algo.py ./db.py ./app.py ./auth.py ./routes.py ./password.txt /DBMi-flask
-COPY ./requirements.txt ./api_routes.py ./sessionkey.txt ./tests/* ./static/* /DBMi-flask
+COPY ./requirements.txt ./api_routes.py ./sessionkey.txt ./static/* /DBMi-flask
 
 RUN apk update \
     && apk --no-cache --update add build-base 
 
-RUN pip3 install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --upgrade pip && pip install -r requirements.txt
 
 # Expose port 5000 for the Flask application
-EXPOSE 5000
+EXPOSE 5014
 
-# Define the command to run the Flask application using Gunicorn
-CMD python -m flask run
+CMD python -m flask --no-debug run --port=5014

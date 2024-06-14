@@ -50,13 +50,16 @@ def getMovieDetails(entries_id):
     # Query to fetch reviews for the movie
     reviews_query = """
         SELECT
-            r.body,
-            r.creation_date
-        FROM review r
-        WHERE r.entries_id_fk = %s;
+            review.body,
+            review.creation_date,
+            review.rating,
+            user.pseudo
+        FROM review, user
+        WHERE entries_id_fk = %s and review.user_id_fk = user.user_id;
         """
     cursor.execute(reviews_query, (entries_id,))
     reviews = cursor.fetchall()
+    print(reviews)
 
     cursor.close()
     connection.close()
@@ -212,7 +215,7 @@ def get_specific_category(category):
 
 
 @api_bp.route('/api/review/<int:entries_id>', methods=['POST'])
-def api_review(user_id, entries_id, comment):
+def api_review(user_id, entries_id, comment, rating=-1):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
@@ -222,7 +225,7 @@ def api_review(user_id, entries_id, comment):
         INSERT INTO review (entries_id_fk, body, user_id_fk, rating, creation_date)
         VALUES (%s, %s, %s, %s, %s);
         """
-    values = (entries_id, comment, user_id, int(-1), current_timestamp)
+    values = (entries_id, comment, user_id, rating, current_timestamp)
 
     cursor.execute(query, values)
     connection.commit()

@@ -7,8 +7,7 @@ from api_routes import (getIndex, searchEntry,
                         api_remove_from_watchlist, getCategories,
                         get_specific_category, getSimilarMovieDetails,
                         getRecommendations, api_review)
-import requests
-import json
+from algo import get_recommendations, average_rating
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -36,11 +35,8 @@ def search():
 def advanced_search():
     query = request.args.get('query')
     if query:
-        advance = requests.get("http://127.0.0.1:5000/api/recommendation",
-                               headers={"args": query})
-        advancedSearch = advance.text
-        result = getSimilarMovieDetails(json.loads(advancedSearch))
-        print(result)
+        advance = get_recommendations([query])
+        result = getSimilarMovieDetails(advance)
     else:
         print("nothing found in advanced search")
         result = []
@@ -56,18 +52,14 @@ def movieDetails(entries_id):
     if not details:
         return "Movie not found", 404
 
-    # get movie recommendations
-    similarMovies = requests.get(
-        "http://127.0.0.1:5000/api/recommendation",
-        headers={"args": details['title']})  # this returns a byte string
-
-    similarContent = similarMovies.text
-    similar = json.loads(similarContent)  # parses string as list
-
+    similar = get_recommendations([details['title']])
     similarMovieDetails = getSimilarMovieDetails(similar)
+    ratings = [review['rating'] for review in reviews]
 
     return render_template('movie_details.html', details=details,
-                           similar_movies=similarMovieDetails, reviews=reviews)
+                           similar_movies=similarMovieDetails,
+                           reviews=reviews,
+                           average_rating=average_rating(ratings))
 
 
 @routes_bp.route('/watchlist', methods=['GET'])  # display watchlist
@@ -77,18 +69,7 @@ def viewWatchlist():
     for movie in watchlist:
         movies.append(movie['title'])
 
-    movie_titles = ', '.join(movies)
-    similarMovies = requests.get(
-        "http://127.0.0.1:5000/api/recommendation",
-        headers={"args": movie_titles})  # this returns a byte string
-
-    similarContent = similarMovies.text
-    similar = json.loads(similarContent)  # parses string as list
-
-    similarMovieDetails = getSimilarMovieDetails(similar)
-
-    return render_template('watchlist.html', output=watchlist,
-                           output2=similarMovieDetails)
+    return render_template('watchlist.html', output=watchlist)
 
 
 # add movie to watchlist
@@ -133,7 +114,19 @@ def review(entries_id):
 
     user_id = session['user_id']
     query = request.form.get('query')
+    rating = request.form.get('rating')
     print("review query: ", query)
+<<<<<<< HEAD
     api_review(user_id, entries_id, query)
     # -> go to moviedetails function and use the render_template there
     return redirect(url_for('routes_bp.movieDetails', entries_id=entries_id))
+=======
+    api_review(user_id, entries_id, query, rating)
+
+    return redirect(url_for('routes.movieDetails', entries_id=entries_id))
+
+
+@routes_bp.route('/rate/<int:entries_id>')  # rate movies
+def rate(entries_id):
+    return
+>>>>>>> 4c88ccdbc5379ae1565bf6faa9558e5d63e5eda8
