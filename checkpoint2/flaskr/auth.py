@@ -11,7 +11,7 @@ connection = get_db_connection()
 cursor = connection.cursor()
 
 
-@auth_bp.route('/register', methods=('GET', 'POST'))
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -41,7 +41,7 @@ def register():
     return render_template('auth/register.html')
 
 
-@auth_bp.route('/login', methods=('GET', 'POST'))
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -71,7 +71,7 @@ def login():
     return render_template('auth/login.html')
 
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout', methods=['GET'])
 def logout():
     # remove the username from the session if it's there
     session.pop('user_id', None)

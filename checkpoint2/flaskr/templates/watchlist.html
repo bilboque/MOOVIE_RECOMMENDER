@@ -37,11 +37,21 @@
                     <p class="overview"><strong>Overview:</strong> 
                         <li>{{ movie.overview }}</li>
                     </p>
-                    <form action="/remove/{{ movie.entries_id }}" method="POST">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                        <button type="submit">Remove from Watchlist</button>
-                    </form>
+                    <div class="forms">
+                        <form action="/remove/{{ movie.entries_id }}" method="POST">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
+                            <button type="submit">Remove from Watchlist</button>
+                        </form>
+                        <form action="/like/{{ movie.entries_id }}" method="POST">
+                            <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
+                            <button type="submit">Like</button>
+                        </form>
+                        <form action="/dislike/{{ movie.entries_id }}" method="POST">
+                            <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
+                            <button type="submit">Dislike</button>
+                        </form>
+                    </div>
                 </div>
             </a>
             {% endfor %}

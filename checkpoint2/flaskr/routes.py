@@ -137,8 +137,3 @@ def review(entries_id):
     api_review(user_id, entries_id, query)
     # -> go to moviedetails function and use the render_template there
     return redirect(url_for('routes_bp.movieDetails', entries_id=entries_id))
-
-
-@routes_bp.route('/rate/<int:entries_id>')  # rate movies
-def rate(entries_id):
-    return
