@@ -116,17 +116,6 @@ def review(entries_id):
     query = request.form.get('query')
     rating = request.form.get('rating')
     print("review query: ", query)
-<<<<<<< HEAD
-    api_review(user_id, entries_id, query)
-    # -> go to moviedetails function and use the render_template there
-    return redirect(url_for('routes_bp.movieDetails', entries_id=entries_id))
-=======
     api_review(user_id, entries_id, query, rating)
 
     return redirect(url_for('routes.movieDetails', entries_id=entries_id))
-
-
-@routes_bp.route('/rate/<int:entries_id>')  # rate movies
-def rate(entries_id):
-    return
->>>>>>> 4c88ccdbc5379ae1565bf6faa9558e5d63e5eda8
