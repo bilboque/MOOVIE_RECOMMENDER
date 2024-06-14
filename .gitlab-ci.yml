@@ -31,7 +31,7 @@ build:
 test:    # It only starts when the job in the build stage completes successfully.
   stage: test
   script:
-    - cd checkpoint2/flaskr/
+    - gnome-terminal --working-directory="$CI_PROJECT_DIR" -- pytest
     - pytest # run tests using pytest
 
 deploy:  # It only runs when *both* jobs in the test stage complete successfully.
