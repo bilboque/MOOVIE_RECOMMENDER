@@ -21,6 +21,7 @@ before_script:
 build:
   script:
     - pip install --no-cache-dir -r ./checkpoint2/flaskr/requirements.txt # install requirements
+    - cd checkpoint2/flaskr/
     - flask --app app run # run flask app
   artifacts:
     paths:
@@ -28,6 +29,7 @@ build:
 
 test:    # It only starts when the job in the build stage completes successfully.
   script:
+    - cd checkpoint2/flaskr/
     - pytest # run tests using pytest
 
 deploy:  # It only runs when *both* jobs in the test stage complete successfully.
