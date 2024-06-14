@@ -50,13 +50,16 @@ def getMovieDetails(entries_id):
     # Query to fetch reviews for the movie
     reviews_query = """
         SELECT
-            r.body,
-            r.creation_date
-        FROM review r
-        WHERE r.entries_id_fk = %s;
+            review.body,
+            review.creation_date,
+            review.rating,
+            user.pseudo
+        FROM review, user
+        WHERE entries_id_fk = %s and review.user_id_fk = user.user_id;
         """
     cursor.execute(reviews_query, (entries_id,))
     reviews = cursor.fetchall()
+    print(reviews)
 
     cursor.close()
     connection.close()

@@ -144,3 +144,11 @@ def get_recommendations(movie_list):
     recommended_titles = [titles[i] for i in top_indices]
 
     return recommended_titles
+
+
+def average_rating(ratings):
+    valid_ratings = [
+        rating for rating in ratings if rating is not None and 1 <= rating <= 10]
+    if not valid_ratings:
+        return "N/A"
+    return sum(valid_ratings) / len(valid_ratings)

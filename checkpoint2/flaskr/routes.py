@@ -7,7 +7,7 @@ from api_routes import (getIndex, searchEntry,
                         api_remove_from_watchlist, getCategories,
                         get_specific_category, getSimilarMovieDetails,
                         getRecommendations, api_review)
-from algo import get_recommendations
+from algo import get_recommendations, average_rating
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -54,9 +54,12 @@ def movieDetails(entries_id):
 
     similar = get_recommendations([details['title']])
     similarMovieDetails = getSimilarMovieDetails(similar)
+    ratings = [review['rating'] for review in reviews]
 
     return render_template('movie_details.html', details=details,
-                           similar_movies=similarMovieDetails, reviews=reviews)
+                           similar_movies=similarMovieDetails,
+                           reviews=reviews,
+                           average_rating=average_rating(ratings))
 
 
 @routes_bp.route('/watchlist', methods=['GET'])  # display watchlist

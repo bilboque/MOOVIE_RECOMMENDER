@@ -37,6 +37,7 @@
             <p>{{ details.overview }}</p>
             <p>Length: {{ details.length }}</p>
             <p>{{ details.date }}</p>
+            <p>rating average: {{ average_rating }}</p>
             <form action="/add/{{ details.entries_id }}" method="POST">
                 <input type="hidden" name="entries_id" value="{{ details.entries_id }}">
                 <button type="submit">Add to Watchlist</button>
@@ -45,12 +46,13 @@
         <div class='review half-width'>
             <form action="/review/{{ details.entries_id }}" method="POST" accept-charset='utf-8'>
                 <input type="text" name="query" placeholder="Add review..." style="width: 300px; height: 40px;">
-                <input type="number" id="rating" name="rating" min="1" max="10" style="width: 80px; height: 40px;">
+                <input type="number" id="rating" name="rating" min="1" max="10" value="5"
+                    style="width: 80px; height: 40px;">
                 <input type="submit" value="Post">
             </form>
             {% for review in reviews %}
             <p>{{ review.body }}</p>
-            <p>{{ review.creation_date }}</p>
+            <p>date: {{ review.creation_date }} - rating: {{review.rating}} - author: {{review.pseudo}}</p>
             {% endfor %}
         </div>
     </div>
