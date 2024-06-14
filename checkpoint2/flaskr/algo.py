@@ -21,11 +21,11 @@ def read_db_password():
 def db_connect():
     # create db connection
     connection = mysql.connector.connect(
-        host="localhost",
+        host="db",
         port=3306,
-        user="root",
+        user="g14",
         password=read_db_password(),
-        database="DBMi"  # db name to access
+        database="g14"  # db name to access
     )
 
     return connection.cursor(), connection
