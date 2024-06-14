@@ -35,9 +35,8 @@ def search():
 def advanced_search():
     query = request.args.get('query')
     if query:
-        advance = get_recommendations(query)
+        advance = get_recommendations([query])
         result = getSimilarMovieDetails(advance)
-        print(result)
     else:
         print("nothing found in advanced search")
         result = []
