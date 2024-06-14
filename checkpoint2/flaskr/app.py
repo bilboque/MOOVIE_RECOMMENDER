@@ -28,4 +28,4 @@ def get_session_key():
 
 if __name__ == '__main__':
     temp_app = create_app()
-    temp_app.run(debug=True)
+    temp_app.run(debug=True, port=5014)

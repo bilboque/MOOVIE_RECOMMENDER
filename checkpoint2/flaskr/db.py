@@ -16,12 +16,10 @@ def read_db_password():
 def get_db_connection():
     # create db connection
     connection = mysql.connector.connect(
-        host="db",
-        port=3306,
+        host="10.25.10.22",
+        port=6033,
         user="g14",
-        password=read_db_password(),
+        password="leo",
         database="g14"  # db name to access
     )
     return connection
-
-    # cursor = connection.cursor()
