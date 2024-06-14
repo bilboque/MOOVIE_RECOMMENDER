@@ -111,9 +111,10 @@ def review(entries_id):
 
     user_id = session['user_id']
     query = request.form.get('query')
+    rating = request.form.get('rating')
     print("review query: ", query)
-    api_review(user_id, entries_id, query)
-    # -> go to moviedetails function and use the render_template there
+    api_review(user_id, entries_id, query, rating)
+
     return redirect(url_for('routes.movieDetails', entries_id=entries_id))
 
 

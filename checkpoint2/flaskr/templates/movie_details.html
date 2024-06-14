@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyMovieDB</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='movie_details.css') }}">
 </head>
+
 <body>
     <header>
         <h1>DBMi</h1>
@@ -13,11 +15,11 @@
     <nav>
         <a href="/">Home</a>
         {% if 'user_id' in session %}
-            <a href="/logout">Logout</a>
-            <a href="/watchlist">Watchlist</a>
+        <a href="/logout">Logout</a>
+        <a href="/watchlist">Watchlist</a>
         {% else %}
-            <a href="/login">Login</a>
-            <a href="/register">Create account</a>
+        <a href="/login">Login</a>
+        <a href="/register">Create account</a>
         {% endif %}
         <div class="search-container">
             <form action="/search" method="GET" accept-charset='utf-8'>
@@ -43,6 +45,7 @@
         <div class='review half-width'>
             <form action="/review/{{ details.entries_id }}" method="POST" accept-charset='utf-8'>
                 <input type="text" name="query" placeholder="Add review..." style="width: 300px; height: 40px;">
+                <input type="number" id="rating" name="rating" min="1" max="10" style="width: 80px; height: 40px;">
                 <input type="submit" value="Post">
             </form>
             {% for review in reviews %}
@@ -69,4 +72,5 @@
         {% endfor %}
     </div>
 </body>
+
 </html>
