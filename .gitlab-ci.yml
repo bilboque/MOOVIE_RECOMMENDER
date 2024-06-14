@@ -20,7 +20,7 @@ before_script:
 
 build:
   script:
-    - pip install -r requirements.txt # install requirements
+    - pip install --no-cache-dir -r ./checkpoint2/flaskr/requirements.txt # install requirements
     - flask --app app run # run flask app
   artifacts:
     paths:
