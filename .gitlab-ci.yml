@@ -17,10 +17,10 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
-  - pip install -r checkpoint2/flask/requirements.txt
 
 build:
   script:
+    - pip install requirements.txt
     - flask --app app run
   artifacts:
     paths:
