@@ -1,15 +1,18 @@
 import unittest
-from algo import db_connect, fetch_metadata, get_tfidf_matrix, get_recommendations
+from algo import fetch_metadata, get_tfidf_matrix, get_recommendations
+from db import get_db_connection
 
 
 class TestAlgo(unittest.TestCase):
     def test_db(self):
-        cursor, conection = db_connect()
+        connection = get_db_connection()
+        cursor = connection.cursor()
         self.assertIsNotNone(cursor, "Db Cursor is None")
-        self.assertIsNotNone(conection, "Db Connection is None")
+        self.assertIsNotNone(connection, "Db Connection is None")
 
     def test_title_numbers(self):
-        cursor, connection = db_connect()
+        connection = get_db_connection()
+        cursor = connection.cursor()
         titles, _ = fetch_metadata()
 
         # Fetch the number of movies directly from the database
@@ -21,7 +24,8 @@ class TestAlgo(unittest.TestCase):
             titles), "Number of movies in DB does not match length of titles list")
 
     def test_metadata(self):
-        cursor, connection = db_connect()
+        connection = get_db_connection()
+        cursor = connection.cursor()
         titles, metadata = fetch_metadata()
 
         entrie = "'Star Wars'"
