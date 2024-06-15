@@ -22,6 +22,7 @@ build:
   stage: build
   script:
     - pip install --no-cache-dir -r ./checkpoint2/flaskr/requirements.txt # install requirements
+    - pip install pytest
   artifacts:
     paths:
       - .cache/pip
