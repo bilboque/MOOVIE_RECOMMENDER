@@ -1,40 +1,43 @@
-stages:          # List of stages for jobs, and their order of execution
-  - build
-  - test
-  - deploy
-
-image: python:latest # docker image used for the job
-
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/pipeline/#customization
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+stages:
+- build
+- test
+- deploy
+image: python:latest
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-cache: 
+cache:
   paths:
-    - .cache/pip # directory that should be cached between jobs
-
+  - ".cache/pip"
 before_script:
-  - python --version ; pip --version  # For debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-
+- python --version ; pip --version
+- pip install virtualenv
+- virtualenv venv
+- source venv/bin/activate
 build:
   stage: build
   script:
-    - pip install --no-cache-dir -r ./checkpoint2/flaskr/requirements.txt # install requirements
+  - pip install --no-cache-dir -r ./checkpoint2/flaskr/requirements.txt
   artifacts:
     paths:
-      - .cache/pip
-
-test:    # It only starts when the job in the build stage completes successfully.
+    - ".cache/pip"
+test:
   stage: test
   script:
-    - cd checkpoint2/flaskr/
-    - pytest # run tests using pytest
-
-deploy:  # It only runs when *both* jobs in the test stage complete successfully.
+  - cd checkpoint2/flaskr/
+  - pytest
+deploy:
   stage: deploy
   environment: production
-  # image: registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir
   script:
-    - podman --version
+  - podman --version
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
