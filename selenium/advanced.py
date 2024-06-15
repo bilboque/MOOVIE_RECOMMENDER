@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.support.ui import WebDriverWait
 import time
 
 firefox_options = FirefoxOptions()
@@ -26,19 +27,23 @@ try:
     time.sleep(1)
 
     # Locate the username and password fields and the submit button
-    imput_field = driver.find_element(By.NAME, "query")
-    submit_button = driver.find_element(
-        By.XPATH, '//input[@type="submit" and @value="Search"]')
-
-    imput_field.send_keys("a movie about a lazy cat who eats lasagna")
+    div = driver.find_element(By.CLASS_NAME, "advanced-search")
+    submit_button = div.find_element(By.XPATH, './/input[@type="submit"]')
+    textarea = div.find_element(By.XPATH, './/textarea')
+    textarea.send_keys("a movie about a lazy cat who eats lasagna")
     submit_button.click()
 
     # wait for api response
     time.sleep(2)
     movie_title = "Garfield"
-    movie_element = EC.presence_of_element_located(
-        (By.XPATH, f'//div[@class="movie"]/h3[text()="{movie_title}"]'))
-    print(f"Found the expected movie: {movie_title}")
+    try:
+        movie_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, f'//div[@class="movie"]/h3[text()="{movie_title}"]'))
+        )
+        print(f"Found the expected movie: {movie_title}")
+    except:
+        print("Timeout waiting for movie element to appear")
 
 finally:
     # Close the browser

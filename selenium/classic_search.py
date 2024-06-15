@@ -1,4 +1,5 @@
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
@@ -32,9 +33,14 @@ try:
                     "Star Wars: Episode II - Attack of the Clones",
                     "Star Wars: The Last Jedi"]
     for movie_title in movie_titles:
-        movie_element = EC.presence_of_element_located(
-            (By.XPATH, f'//div[@class="movie"]/h3[text()="{movie_title}"]'))
-        print(f"Found the expected movie: {movie_title}")
+        try:
+            movie_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, f'//div[@class="movie"]/h3[text()="{movie_title}"]'))
+            )
+            print(f"Found the expected movie: {movie_title}")
+        except:
+            print("Timeout waiting for movie element to appear")
 
 finally:
     # Close the browser

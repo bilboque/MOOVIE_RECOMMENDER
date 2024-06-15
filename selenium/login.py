@@ -35,6 +35,8 @@ try:
     password_field.send_keys("Password")
     submit_button.click()
 
+    time.sleep(1)
+    assert driver.current_url == "http://127.0.0.1:5000/"
 
 finally:
     # Close the browser

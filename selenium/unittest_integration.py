@@ -20,15 +20,19 @@ class RunScriptsTest(unittest.TestCase):
 
     def test_login(self):
         self.run_script('./login.py')
+        print("Login test OK...")
 
     def test_advanced(self):
         self.run_script('./advanced.py')
+        print("Advanced Search test OK...")
 
     def test_classic(self):
         self.run_script('./classic_search.py')
+        print("Classic Search test OK...")
 
     def test_redirect(self):
         self.run_script('./login_redirect.py')
+        print("Login Redirect test OK...")
 
     # Add more test methods for other scripts if needed
 
