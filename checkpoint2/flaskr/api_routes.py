@@ -102,10 +102,14 @@ def getRecommendations():
 
 @api_bp.route("/api/watchlist_recommendation", methods=['GET'])
 def getWatchlistRecommendation():
-    good_titles = request.headers.get('good_titles', '').split(',')
-    bad_titles = request.headers.get('bad_titles', '').split(',')
+    good_titles = request.args.get('good_titles', '').split(',')
+    bad_titles = request.args.get('bad_titles', '').split(',')
+
+    print(good_titles)
+    print(bad_titles)
 
     recommendations = get_recommendation_watchlist(good_titles, bad_titles)
+    print(recommendations)
 
     return jsonify(recommendations)
 

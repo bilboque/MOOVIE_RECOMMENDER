@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Movie Watchlist</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='watchlist.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <header>
         <h1>My Watchlist</h1>
@@ -13,11 +16,11 @@
     <nav>
         <a href="/">Home</a>
         {% if 'user_id' in session %}
-            <a href="/logout">Logout</a>
-            <a href="/watchlist">Watchlist</a>
+        <a href="/logout">Logout</a>
+        <a href="/watchlist">Watchlist</a>
         {% else %}
-            <a href="/login">Login</a>
-            <a href="/register">Create account</a>
+        <a href="/login">Login</a>
+        <a href="/register">Create account</a>
         {% endif %}
         <div class="search-container">
             <form action="/search" method="GET" accept-charset='utf-8'>
@@ -29,36 +32,83 @@
     </nav>
     <div class="container full-width watchlist">
         {% if output %}
-            {% for movie in output %}
-            <a href="/movie/{{ movie.entries_id }}" class="details-link">
-                <div class="movie">
-                    <h3>{{ movie.title }}</h3>
-                    <p>Release Year: {{ movie.date }}</p>
-                    <p class="overview"><strong>Overview:</strong> 
-                        <li>{{ movie.overview }}</li>
-                    </p>
-                    <div class="forms">
-                        <form action="/remove/{{ movie.entries_id }}" method="POST">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                            <button type="submit">Remove from Watchlist</button>
-                        </form>
-                        <form action="/like/{{ movie.entries_id }}" method="POST">
-                            <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                            <button type="submit">Like</button>
-                        </form>
-                        <form action="/dislike/{{ movie.entries_id }}" method="POST">
-                            <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
-                            <button type="submit">Dislike</button>
-                        </form>
-                    </div>
+        {% for movie in output %}
+        <button class="like-button" data-title="{{ movie.title }}">Like</button>
+        <button class="dislike-button" data-title="{{ movie.title }}">Dislike</button>
+        <a href="/movie/{{ movie.entries_id }}" class="details-link">
+            <div class="movie">
+                <h3>{{ movie.title }}</h3>
+                <p>Release Year: {{ movie.date }}</p>
+                <p class="overview"><strong>Overview:</strong>
+                    <li>{{ movie.overview }}</li>
+                </p>
+                <div class="forms">
+                    <form action="/remove/{{ movie.entries_id }}" method="POST">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="entries_id" value="{{ movie.entries_id }}">
+                        <button type="submit">Remove from Watchlist</button>
+                    </form>
                 </div>
-            </a>
-            {% endfor %}
+            </div>
+        </a>
+        {% endfor %}
         {% else %}
-            <p>Your watchlist is empty.</p>
+        <p>Your watchlist is empty.</p>
         {% endif %}
     </div>
-</body>
-</html>
+    <button id="get-recommendations">Get Recommendations</button>
 
+    <!-- Placeholder for displaying recommended movies -->
+    <div id="recommended-movies"></div>
+
+    <script>
+        $(document).ready(function () {
+            let good_titles = [];
+            let bad_titles = [];
+
+            $('.like-button').click(function () {
+                let title = $(this).data('title');
+                good_titles.push(title);
+                $(this).prop('disabled', true);
+                $(this).next('.dislike-button').hide(); // Hide the dislike button
+            });
+
+            $('.dislike-button').click(function () {
+                let title = $(this).data('title');
+                bad_titles.push(title);
+                $(this).prop('disabled', true);
+                $(this).prev('.like-button').hide(); // Hide the like button
+            });
+
+            $('#get-recommendations').click(function () {
+                // Construct URL with query parameters
+                let url = '/api/watchlist_recommendation';
+                if (good_titles.length > 0 || bad_titles.length > 0) {
+                    url += '?';
+                    if (good_titles.length > 0) {
+                        url += 'good_titles=' + good_titles.join(',') + '&';
+                    }
+                    if (bad_titles.length > 0) {
+                        url += 'bad_titles=' + bad_titles.join(',');
+                    }
+                }
+
+                // Make AJAX GET request
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function (response) {
+                        // Display recommended movies as a paragraph
+                        let recommendedMovies = response.join(', ');
+                        $('#recommended-movies').html(`<p>Recommended movies: ${recommendedMovies}</p>`);
+                    },
+                    error: function (error) {
+                        console.error('Error fetching recommendations:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

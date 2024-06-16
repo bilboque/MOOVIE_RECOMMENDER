@@ -108,7 +108,7 @@ def get_tfidf_matrix():
 
 
 # Function that takes in movie title as input and outputs most similar movies
-def get_recommendations(movie_list, exculded_movies=[]):
+def get_recommendations(movie_list, excluded_movies=[]):
     tf_idf, tfidf_matrix, titles, metadata = get_tfidf_matrix()
 
     # Concatenate the overviews of the input movies
@@ -141,7 +141,7 @@ def get_recommendations(movie_list, exculded_movies=[]):
     # Get top 10 similar movies
     top_indices = dist.argsort()[::]
     top_indices = [i for i in top_indices if titles[i]
-                   not in movie_list and titles[i] not in exculded_movies][:10]
+                   not in movie_list and titles[i] not in excluded_movies][:10]
 
     recommended_titles = [titles[i] for i in top_indices]
 
@@ -158,15 +158,18 @@ def get_recommendation_watchlist(nice_movies, bad_movies):
     bad_indices = [titles.index(movie)
                    for movie in bad_movies if movie in titles]
 
-    nice_tfidf_sum = np.sum(tfidf_matrix[nice_indices], axis=0)
-    bad_tfidf_sum = np.sum(tfidf_matrix[bad_indices], axis=0)
+    nice_tfidf_sum = np.asarray(
+        np.sum(tfidf_matrix[nice_indices], axis=0)).flatten()
+    bad_tfidf_sum = np.asarray(
+        np.sum(tfidf_matrix[bad_indices], axis=0)).flatten()
 
     summed_tfidf = nice_tfidf_sum - bad_tfidf_sum
 
     top_indices = np.argsort(summed_tfidf)[::-1][:10]
     top_keywords = [feature_names[i] for i in top_indices]
+    print(top_keywords)
 
-    return get_recommendations(top_keywords, execluded_movies=(bad_movies + nice_movies))
+    return get_recommendations([' '.join(top_keywords)], excluded_movies=(bad_movies + nice_movies))
 
 
 def average_rating(ratings):
