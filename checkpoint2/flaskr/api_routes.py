@@ -2,7 +2,7 @@ from flask import (jsonify,
                    request, session, Blueprint, url_for, redirect)
 from db import get_db_connection
 import auth
-from algo import get_recommendations
+from algo import get_recommendations, get_recommendation_watchlist
 import json
 import datetime
 
@@ -98,6 +98,16 @@ def getRecommendations():
     title.append(request.headers.get('args'))
     recommendations = get_recommendations(title)
     return recommendations
+
+
+@api_bp.route("/api/watchlist_recommendation", methods=['GET'])
+def getWatchlistRecommendation():
+    good_titles = request.headers.get('good_titles', '').split(',')
+    bad_titles = request.headers.get('bad_titles', '').split(',')
+
+    recommendations = get_recommendation_watchlist(good_titles, bad_titles)
+
+    return jsonify(recommendations)
 
 
 @api_bp.route('/api/search', methods=['GET'])  # search for a movie
