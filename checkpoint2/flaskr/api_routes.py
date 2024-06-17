@@ -13,7 +13,7 @@ api_bp = Blueprint('api_routes', __name__)
 def getIndex():
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
-    mysql_query = """ SELECT * FROM entries LIMIT 50;"""
+    mysql_query = """ SELECT * FROM entries ORDER BY RAND() LIMIT 1000;"""
     cursor.execute(mysql_query)
     output = cursor.fetchall()
 
