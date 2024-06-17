@@ -36,7 +36,7 @@ test:    # It only starts when the job in the build stage completes successfully
     - build # test stage depends on the build stage
   script:
     - cd checkpoint2/flaskr/
-    - . .venv/bin/activate
+    - . venv/bin/activate
     - flask --app app run & # run flask in background, necessary for tests
     - pytest # run tests using pytest
 
