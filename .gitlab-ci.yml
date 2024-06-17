@@ -31,6 +31,7 @@ test:    # It only starts when the job in the build stage completes successfully
   script:
     - cd checkpoint2/flaskr/
     - pip install pytest
+    - flask --app app run & # run flask in background, necessary for tests
     - pytest # run tests using pytest
 
 deploy:  # It only runs when *both* jobs in the test stage complete successfully.
