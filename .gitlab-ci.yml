@@ -1,9 +1,9 @@
-stages:          # stageless pipeline
+stages:          # stages
   - build
   - test
   - deploy
 
-image: python:latest # docker image used for the job
+image: python:3.9 # docker image used for the job
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -14,23 +14,29 @@ cache:
 
 before_script:
   - python --version ; pip --version  # For debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+  #- pip install virtualenv
+  #- virtualenv venv
+  #- source venv/bin/activate
+  - python -m venv ./checkpoint2/flaskr/venv
 
 build:
   stage: build
   script:
-    - pip install --no-cache-dir -r ./checkpoint2/flaskr/requirements.txt # install requirements
+    - cd checkpoint2/flaskr/ # change directory
+    - . venv/bin/activate # activate virtual environment
+    - pip install --no-cache-dir -r requirements.txt # install requirements
   artifacts:
     paths:
       - .cache/pip
+      - ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
 
 test:    # It only starts when the job in the build stage completes successfully.
   stage: test
+  dependencies: 
+    - build # test stage depends on the build stage
   script:
     - cd checkpoint2/flaskr/
-    - pip install pytest
+    - . .venv/bin/activate
     - flask --app app run & # run flask in background, necessary for tests
     - pytest # run tests using pytest
 
