@@ -28,7 +28,7 @@ build:
   artifacts:
     paths:
       - .cache/pip
-      - ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
+      #- ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
 
 test:    # It only starts when the job in the build stage completes successfully.
   stage: test
