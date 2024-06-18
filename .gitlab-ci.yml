@@ -23,9 +23,13 @@ before_script:
 
 
 test:    
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: './checkpoint2/flaskr/'
   stage: test
   image: $PYTHON_IMG
   script:
+    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash # download secure file 
+    - ls .secure_files
     - source venv/bin/activate
     - flask --app app run --host=0.0.0.0 & # run flask in background, necessary for tests
     - sleep 5
