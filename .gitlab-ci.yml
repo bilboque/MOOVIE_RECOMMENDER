@@ -31,7 +31,6 @@ test:    # It only starts when the job in the build stage completes successfully
     #- build # test stage depends on the build stage
   image: $PYTHON_IMG
   script:
-    - cd checkpoint2/flaskr/
     - source venv/bin/activate
     - flask --app app run --host=0.0.0.0 & # run flask in background, necessary for tests
     - sleep 5
