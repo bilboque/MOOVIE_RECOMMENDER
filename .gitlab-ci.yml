@@ -11,22 +11,20 @@ cache:
     - .cache/pip # directory that should be cached between jobs
     - venv/
 
-before_script:
-  - python --version ; pip --version  # For debugging
-  - cd checkpoint2/flaskr/
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
-  - pytest --version    #debug message
-  - pip show pytest     #debug message
-
-
 test:    
   variables:
     SECURE_FILES_DOWNLOAD_PATH: './checkpoint2/flaskr/'
   stage: test
   image: $PYTHON_IMG
+  before_script:
+    - python --version ; pip --version  # For debugging
+    - cd checkpoint2/flaskr/
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pytest --version    #debug message
+    - pip show pytest     #debug message
   script:
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash # download secure file
     - source venv/bin/activate
@@ -42,8 +40,10 @@ deploy:  # It only runs when both jobs in the test stage complete successfully.
     - apt-get update 
     - apt install podman -y
     - podman --version
+    - cd checkpoint2/flaskr/
     - podman login registry.gitlab.unige.ch -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
-    - podman build -t registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir -f Containerfile .
+    - podman build -t registry.gitlab.unige.ch/courses1/pt1/2324/g14/flask:superioir .
+    #- podman build -t registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir -f checkpoint/flask/Containerfile .
     - podman push registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir
     - echo "Pipeline finished :-)"
 
