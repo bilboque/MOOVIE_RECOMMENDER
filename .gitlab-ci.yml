@@ -42,7 +42,7 @@ deploy:  # It only runs when both jobs in the test stage complete successfully.
     - apt-get update 
     - apt install podman -y
     - podman --version
-    - podman login registry.gitlab.unige.ch
+    - podman login registry.gitlab.unige.ch -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - podman pull $CI_REGISTRY_IMAGE:superioir
     - podman build -t $CI_REGISTRY_IMAGE:superioir -f Containerfile .
     - podman push $CI_REGISTRY_IMAGE:superioir
