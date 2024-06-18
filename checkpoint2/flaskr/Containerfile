@@ -4,7 +4,7 @@ FROM python:3.12-alpine
 WORKDIR /DBMi-flask
 
 # Copy the necessary files and directories into the container
-COPY ./algo.py ./db.py ./app.py ./auth.py ./routes.py ./password.txt /DBMi-flask
+COPY ./algo.py ./db.py ./app.py ./auth.py ./routes.py /DBMi-flask
 COPY ./requirements.txt ./api_routes.py ./sessionkey.txt ./tests/* ./static/* /DBMi-flask
 
 RUN apk update \
