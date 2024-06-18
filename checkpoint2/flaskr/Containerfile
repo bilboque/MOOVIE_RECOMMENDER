@@ -8,9 +8,11 @@ COPY ./algo.py ./db.py ./app.py ./auth.py ./routes.py /DBMi-flask
 COPY ./requirements.txt ./api_routes.py ./sessionkey.txt ./tests/* ./static/* /DBMi-flask
 
 RUN apk update \
-    && apk --no-cache --update add build-base 
+    && apk add --no-cache build-base \
+    && pip3 install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-RUN pip3 install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+ENV FLASK_APP=app.py
 
 # Expose port 5000 for the Flask application
 EXPOSE 5014
