@@ -47,6 +47,8 @@ deploy:  # It only runs when both jobs in the test stage complete successfully.
     - podman build --network=host -t registry.gitlab.unige.ch/courses1/pt1/2324/g14/flask:superioir .
     - podman push registry.gitlab.unige.ch/courses1/pt1/2324/g14/flask:superioir
     - echo "Pipeline finished :-)"
+  needs:
+    - job: test
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml # creates SAST jobs in your CI/CD pipeline and scans your project’s source code for possible vulnerabilities
