@@ -17,14 +17,14 @@ test:
   stage: test
   image: $PYTHON_IMG
   before_script:
-  - python --version ; pip --version  # For debugging
-  - cd checkpoint2/flaskr/
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
-  - pytest --version    #debug message
-  - pip show pytest     #debug message
+    - python --version ; pip --version  # For debugging
+    - cd checkpoint2/flaskr/
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pytest --version    #debug message
+    - pip show pytest     #debug message
   script:
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash # download secure file
     - source venv/bin/activate
@@ -47,3 +47,6 @@ deploy:  # It only runs when both jobs in the test stage complete successfully.
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml # creates SAST jobs in your CI/CD pipeline and scans your project’s source code for possible vulnerabilities
+
+default:
+  image: $PYTHON_IMG
