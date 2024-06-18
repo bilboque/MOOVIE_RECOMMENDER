@@ -1,39 +1,38 @@
 stages:          # stages
-  - build
+  #- build
   - test
   - deploy
 
-# image: python:3.9 # docker image used for the job
+#image: python:3.9 # docker image used for the job
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHON_IMG: "python:3.9"
 
 cache: 
   paths:
     - .cache/pip # directory that should be cached between jobs
+    - venv/
 
 before_script:
   - python --version ; pip --version  # For debugging
+  - cd checkpoint2/flaskr/
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+  - pytest --version    #debug message
+  - pip show pytest     #debug message
 
-build:
-  stage: build
-  script:
-    - python -m venv ./checkpoint2/flaskr/venv
-    - cd checkpoint2/flaskr/ # change directory
-    - . venv/bin/activate # activate virtual environment
-    - pip install --no-cache-dir -r requirements.txt # install requirements
-  artifacts:
-    paths:
-      - .cache/pip
-      #- ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
 
 test:    # It only starts when the job in the build stage completes successfully.
   stage: test
-  dependencies: 
-    - build # test stage depends on the build stage
+  #dependencies: 
+    #- build # test stage depends on the build stage
+  image: $PYTHON_IMG
   script:
     - cd checkpoint2/flaskr/
-    - . venv/bin/activate
+    - source venv/bin/activate
     - flask --app app run --host=0.0.0.0 & # run flask in background, necessary for tests
     - sleep 5
     - pytest # run tests using pytest
