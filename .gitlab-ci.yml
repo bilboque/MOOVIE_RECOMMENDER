@@ -20,13 +20,12 @@ build:
   stage: build
   script:
     - cd checkpoint2/flaskr/ # change directory
-    - ls
     - . venv/bin/activate # activate virtual environment
     - pip install --no-cache-dir -r requirements.txt # install requirements
   artifacts:
     paths:
       - .cache/pip
-      #- ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
+      - ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
 
 test:    # It only starts when the job in the build stage completes successfully.
   stage: test
@@ -35,7 +34,8 @@ test:    # It only starts when the job in the build stage completes successfully
   script:
     - cd checkpoint2/flaskr/
     - . venv/bin/activate
-    - flask --app app run & # run flask in background, necessary for tests
+    - flask --app app run --host=0.0.0.0 & # run flask in background, necessary for tests
+    - sleep 5
     - pytest # run tests using pytest
 
 deploy:  # It only runs when *both* jobs in the test stage complete successfully.
