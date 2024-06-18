@@ -34,16 +34,16 @@ test:
     - sleep 5
     - pytest # run tests using pytest
 
-deploy:  # It only runs when *both* jobs in the test stage complete successfully.
+deploy:  # It only runs when both jobs in the test stage complete successfully.
   stage: deploy
   environment: production
-  # image: registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir
+  #image: registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir
   script:
-    - sudo apt install podman -y
     - podman --version
-    #- podman pull $CI_REGISTRY_IMAGE:superioir
-    #- podman build -t $CI_REGISTRY_IMAGE:superioir -f Containerfile
-    #- podman push $CI_REGISTRY_IMAGE:superioir
+    - podman pull $CI_REGISTRY_IMAGE:superioir
+    - podman build -t $CI_REGISTRY_IMAGE:superioir -f Containerfile .
+    - podman push $CI_REGISTRY_IMAGE:superioir
+    - echo "Pipeline finished :-)"
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml # creates SAST jobs in your CI/CD pipeline and scans your project’s source code for possible vulnerabilities
