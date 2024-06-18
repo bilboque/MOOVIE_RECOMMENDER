@@ -10,7 +10,7 @@ COPY ./requirements.txt ./api_routes.py ./sessionkey.txt ./tests/* ./static/* /D
 RUN apk update \
     && apk add --no-cache build-base \
     && pip3 install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install -r requirements.txt
 
 ENV FLASK_APP=app.py
 
