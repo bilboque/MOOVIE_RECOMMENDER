@@ -41,7 +41,7 @@ deploy:  # It only runs when both jobs in the test stage complete successfully.
     - apt install podman -y
     - podman --version
     - podman login registry.gitlab.unige.ch -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
-    - podman build -t registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir -f Containerfile .
+    - podman build -t registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir -f checkpoint/flask/Containerfile .
     - podman push registry.gitlab.unige.ch/courses1/pt1324/g14/flask:superioir
     - echo "Pipeline finished :-)"
 
