@@ -14,11 +14,11 @@ cache:
 
 before_script:
   - python --version ; pip --version  # For debugging
-  - python -m venv ./checkpoint2/flaskr/venv
 
 build:
   stage: build
   script:
+    - python -m venv ./checkpoint2/flaskr/venv
     - cd checkpoint2/flaskr/ # change directory
     - . venv/bin/activate # activate virtual environment
     - pip install --no-cache-dir -r requirements.txt # install requirements
