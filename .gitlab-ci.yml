@@ -1,9 +1,6 @@
-stages:          # stages
-  #- build
+stages:         
   - test
   - deploy
-
-#image: python:3.9 # docker image used for the job
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -25,10 +22,8 @@ before_script:
   - pip show pytest     #debug message
 
 
-test:    # It only starts when the job in the build stage completes successfully.
+test:    
   stage: test
-  #dependencies: 
-    #- build # test stage depends on the build stage
   image: $PYTHON_IMG
   script:
     - source venv/bin/activate
@@ -49,3 +44,6 @@ deploy:  # It only runs when *both* jobs in the test stage complete successfully
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml # creates SAST jobs in your CI/CD pipeline and scans your project’s source code for possible vulnerabilities
+
+default:
+  image: $PYTHON_IMG
