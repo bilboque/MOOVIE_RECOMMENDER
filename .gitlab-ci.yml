@@ -3,7 +3,7 @@ stages:          # stages
   - test
   - deploy
 
-image: python:3.9 # docker image used for the job
+# image: python:3.9 # docker image used for the job
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -25,7 +25,7 @@ build:
   artifacts:
     paths:
       - .cache/pip
-      - ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
+      #- ./checkpoint2/flaskr/venv/ # ensures exact same venv is used in both build and test stages
 
 test:    # It only starts when the job in the build stage completes successfully.
   stage: test
